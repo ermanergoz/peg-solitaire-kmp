@@ -1,0 +1,61 @@
+CREATE TABLE ScoreEntity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    boardType TEXT NOT NULL,
+    remainingPegs INTEGER NOT NULL,
+    elapsedTimeMillis INTEGER NOT NULL
+);
+
+CREATE INDEX idx_score_board_type ON ScoreEntity(boardType);
+
+CREATE TABLE LevelProgressEntity (
+    levelNumber INTEGER PRIMARY KEY,
+    stars INTEGER NOT NULL,
+    remainingPegs INTEGER NOT NULL,
+    elapsedTimeMillis INTEGER NOT NULL
+);
+
+getBestScore:
+SELECT boardType, remainingPegs, elapsedTimeMillis
+FROM ScoreEntity
+WHERE boardType = ?
+ORDER BY remainingPegs ASC, elapsedTimeMillis ASC
+LIMIT 1;
+
+insertScore:
+INSERT INTO ScoreEntity (boardType, remainingPegs, elapsedTimeMillis)
+VALUES (?, ?, ?);
+
+getLevelProgress:
+SELECT levelNumber, stars, remainingPegs, elapsedTimeMillis
+FROM LevelProgressEntity
+WHERE levelNumber = ?;
+
+getAllLevelProgress:
+SELECT levelNumber, stars, remainingPegs, elapsedTimeMillis
+FROM LevelProgressEntity
+ORDER BY levelNumber ASC;
+
+getHighestCompletedLevel:
+SELECT MAX(levelNumber)
+FROM LevelProgressEntity;
+
+upsertLevelProgress:
+INSERT OR REPLACE INTO LevelProgressEntity (levelNumber, stars, remainingPegs, elapsedTimeMillis)
+VALUES (?, ?, ?, ?);
+
+clearAllLevelProgress:
+DELETE FROM LevelProgressEntity;
+
+cleanupOldScores:
+DELETE FROM ScoreEntity
+WHERE id NOT IN (
+    SELECT id FROM ScoreEntity s1
+    WHERE s1.remainingPegs = (
+        SELECT MIN(s2.remainingPegs) FROM ScoreEntity s2 WHERE s2.boardType = s1.boardType
+    )
+    AND s1.elapsedTimeMillis = (
+        SELECT MIN(s3.elapsedTimeMillis) FROM ScoreEntity s3
+        WHERE s3.boardType = s1.boardType AND s3.remainingPegs = s1.remainingPegs
+    )
+    GROUP BY s1.boardType
+);
