@@ -2,32 +2,43 @@ import SwiftUI
 import Shared
 
 struct ContentView: View {
-    @State private var showContent = false
-    var body: some View {
-        VStack {
-            Button("Click me!") {
-                withAnimation {
-                    showContent = !showContent
-                }
-            }
+    @StateObject private var router = Router()
 
-            if showContent {
-                VStack(spacing: 16) {
-                    Image(systemName: "swift")
-                        .font(.system(size: 200))
-                        .foregroundColor(.accentColor)
-                    Text("SwiftUI: \(Greeting().greet())")
-                }
-                .transition(.move(edge: .top).combined(with: .opacity))
+    var body: some View {
+        NavigationStack {
+            switch router.currentScreen {
+            case .menu:
+                MenuView(
+                    onClassicSelected: { boardType in
+                        router.currentScreen = .classicGame(boardType: boardType)
+                    },
+                    onChallengeSelected: { level in
+                        router.currentScreen = .challengeGame(levelNumber: level)
+                    }
+                )
+            case .classicGame(let boardType):
+                GameView(
+                    boardType: boardType,
+                    levelNumber: nil,
+                    onQuit: { router.currentScreen = .menu }
+                )
+            case .challengeGame(let levelNumber):
+                GameView(
+                    boardType: nil,
+                    levelNumber: levelNumber,
+                    onQuit: { router.currentScreen = .menu }
+                )
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding()
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+class Router: ObservableObject {
+    @Published var currentScreen: AppScreen = .menu
+}
+
+enum AppScreen {
+    case menu
+    case classicGame(boardType: BoardType)
+    case challengeGame(levelNumber: Int32)
 }

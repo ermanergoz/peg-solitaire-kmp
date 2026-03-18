@@ -1,0 +1,168 @@
+package com.erman.pegsolitaire.ui.screen
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.erman.pegsolitaire.domain.model.GameState
+import com.erman.pegsolitaire.presentation.GameEvent
+import com.erman.pegsolitaire.presentation.GameViewModel
+import com.erman.pegsolitaire.presentation.SCORE_SEPARATOR
+import com.erman.pegsolitaire.ui.component.BoardCanvas
+import com.erman.pegsolitaire.ui.component.GameOverDialog
+import com.erman.pegsolitaire.ui.component.GameTopBar
+
+@Composable
+fun GameScreen(
+    gameViewModel: GameViewModel,
+    onQuit: () -> Unit
+) {
+    val uiState by gameViewModel.state.collectAsState()
+    var gameOverEvent by remember { mutableStateOf<GameEvent.GameOver?>(null) }
+
+    CollectGameEvents(gameViewModel) { event -> gameOverEvent = event }
+
+    DisposableEffect(gameViewModel) {
+        onDispose { gameViewModel.onCleared() }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        val gameState = uiState.gameState
+
+        when {
+            uiState.error != null -> ErrorContent(
+                message = uiState.error!!,
+                onRetry = gameViewModel::resetGame,
+                onQuit = onQuit
+            )
+            uiState.isLoading || gameState == null -> LoadingContent()
+            else -> GameContent(
+                gameState = gameState,
+                gameOverEvent = gameOverEvent,
+                onCellClicked = gameViewModel::onCellClicked,
+                onUndoClicked = gameViewModel::onUndoClicked,
+                onResetClicked = gameViewModel::resetGame,
+                onRestart = {
+                    gameOverEvent = null
+                    gameViewModel.resetGame()
+                },
+                onQuit = {
+                    gameOverEvent = null
+                    onQuit()
+                },
+                onNextLevel = { levelNumber ->
+                    gameOverEvent = null
+                    gameViewModel.startChallengeLevel(levelNumber)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun CollectGameEvents(
+    gameViewModel: GameViewModel,
+    onGameOver: (GameEvent.GameOver) -> Unit
+) {
+    LaunchedEffect(Unit) {
+        gameViewModel.events.collect { event ->
+            when (event) {
+                is GameEvent.GameOver -> onGameOver(event)
+                is GameEvent.InvalidMove -> {}
+                is GameEvent.PegMoved -> {}
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingContent() {
+    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+}
+
+@Composable
+private fun ErrorContent(message: String, onRetry: () -> Unit, onQuit: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.error
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            TextButton(onClick = onQuit) { Text("Quit") }
+            TextButton(onClick = onRetry) { Text("Retry") }
+        }
+    }
+}
+
+@Composable
+private fun GameContent(
+    gameState: GameState,
+    gameOverEvent: GameEvent.GameOver?,
+    onCellClicked: (Int, Int) -> Unit,
+    onUndoClicked: () -> Unit,
+    onResetClicked: () -> Unit,
+    onRestart: () -> Unit,
+    onQuit: () -> Unit,
+    onNextLevel: (Int) -> Unit
+) {
+    val scoreText = "${gameState.remainingPegs}$SCORE_SEPARATOR${gameState.totalPegs}"
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        GameTopBar(
+            scoreText = scoreText,
+            elapsedTimeMillis = gameState.elapsedTimeMillis,
+            canUndo = gameState.canUndo,
+            onUndoClicked = onUndoClicked,
+            onResetClicked = onResetClicked
+        )
+
+        BoardCanvas(
+            board = gameState.board,
+            onCellClicked = onCellClicked,
+            modifier = Modifier
+                .weight(1f)
+                .padding(16.dp)
+        )
+    }
+
+    if (gameOverEvent != null) {
+        val nextLevelNumber = gameState.levelNumber?.let { it + 1 }
+
+        GameOverDialog(
+            scoreText = gameOverEvent.scoreText,
+            stars = gameOverEvent.stars,
+            onRestart = onRestart,
+            onQuit = onQuit,
+            onNextLevel = if (gameOverEvent.stars != null && nextLevelNumber != null) {
+                { onNextLevel(nextLevelNumber) }
+            } else null
+        )
+    }
+}
