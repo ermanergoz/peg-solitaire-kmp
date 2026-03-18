@@ -1,27 +1,83 @@
-# Compiled class file
+# Kotlin / Gradle
 *.class
-
-# Log file
+*.iml
 *.log
+.kotlin/
+.gradle/
+**/build/
+!src/**/build/
+local.properties
+gradle/kotlin-js-store/
 
-# BlueJ files
+# Android
+captures/
+.externalNativeBuild/
+.cxx/
+
+# iOS / Xcode
+xcuserdata/
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
+*.xcworkspace/xcuserdata/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+Pods/
+
+# IDE
+.idea/
+.vscode/
+.fleet/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Java
+hs_err_pid*
+replay_pid*
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
+# Package files
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 *.war
 *.nar
 *.ear
-*.zip
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# Node
+node_modules/
 
-# Kotlin Gradle plugin data, see https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
-.kotlin/
+# AI / Claude / Agent tools
+.claude/
+.claude_memory/
+.cursorrules
+.cursor/
+.aider*
+.codeium/
+.continue/
+.copilot/
+.github/copilot/
+CLAUDE.md
+.claudeignore
+.agents/
+skills-lock.json
+.kiro/
+.opencode/
+.planning/
+.tasks/
+.gemini/
+.windsurf/
+.bolt/
