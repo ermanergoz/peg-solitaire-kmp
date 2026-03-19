@@ -17,14 +17,14 @@ class GameViewModelWrapper: ObservableObject {
         eventCollector = FlowCollector(flow: viewModel.events)
 
         stateCollector.collect { [weak self] uiState in
-            guard let self = self else { return }
+            guard let self = self, let uiState = uiState else { return }
             self.gameState = uiState.gameState
             self.isLoading = uiState.isLoading
             self.error = uiState.error
         }
 
         eventCollector.collect { [weak self] event in
-            guard let self = self else { return }
+            guard let self = self, let event = event else { return }
             if let gameOver = event as? GameEvent.GameOver {
                 self.lastGameOverScore = GameOverInfo(
                     scoreText: gameOver.scoreText,

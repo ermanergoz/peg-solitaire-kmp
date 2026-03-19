@@ -3,9 +3,7 @@ import Shared
 
 struct MenuView: View {
     let onClassicSelected: (BoardType) -> Void
-    let onChallengeSelected: (Int32) -> Void
-
-    @StateObject private var viewModel = HomeViewModelWrapper()
+    let onChallengeSelected: () -> Void
 
     var body: some View {
         VStack(spacing: 24) {
@@ -15,14 +13,14 @@ struct MenuView: View {
                 .foregroundColor(.pink)
 
             ClassicModeCard(onBoardSelected: onClassicSelected)
-            ChallengeModeCard(
-                hasOngoingChallenge: viewModel.uiState.hasOngoingChallenge,
-                currentLevel: viewModel.uiState.currentChallengeLevel,
-                onChallengeSelected: onChallengeSelected
-            )
+
+            MenuCard(title: "Challenge Mode") {
+                MenuButton(text: "Browse Levels", color: .purple) {
+                    onChallengeSelected()
+                }
+            }
         }
         .padding(24)
-        .onAppear { viewModel.loadData() }
     }
 }
 
@@ -38,26 +36,6 @@ private struct ClassicModeCard: View {
                 ) {
                     onBoardSelected(boardType)
                 }
-            }
-        }
-    }
-}
-
-private struct ChallengeModeCard: View {
-    let hasOngoingChallenge: Bool
-    let currentLevel: Int32
-    let onChallengeSelected: (Int32) -> Void
-
-    private var buttonText: String {
-        hasOngoingChallenge
-            ? "Continue (Level \(currentLevel))"
-            : "Start Challenge"
-    }
-
-    var body: some View {
-        MenuCard(title: "Challenge Mode") {
-            MenuButton(text: buttonText, color: .purple) {
-                onChallengeSelected(currentLevel)
             }
         }
     }

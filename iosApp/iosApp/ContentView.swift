@@ -12,8 +12,17 @@ struct ContentView: View {
                     onClassicSelected: { boardType in
                         router.currentScreen = .classicGame(boardType: boardType)
                     },
-                    onChallengeSelected: { level in
+                    onChallengeSelected: {
+                        router.currentScreen = .challengeLevelSelector
+                    }
+                )
+            case .challengeLevelSelector:
+                ChallengeLevelSelectorView(
+                    onLevelSelected: { level in
                         router.currentScreen = .challengeGame(levelNumber: level)
+                    },
+                    onBack: {
+                        router.currentScreen = .menu
                     }
                 )
             case .classicGame(let boardType):
@@ -39,6 +48,7 @@ class Router: ObservableObject {
 
 enum AppScreen {
     case menu
+    case challengeLevelSelector
     case classicGame(boardType: BoardType)
     case challengeGame(levelNumber: Int32)
 }
