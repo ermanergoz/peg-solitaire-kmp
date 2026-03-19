@@ -2,10 +2,12 @@ package com.erman.pegsolitaire.presentation
 
 import com.erman.pegsolitaire.domain.model.GameMode
 import com.erman.pegsolitaire.domain.model.GameState
+import com.erman.pegsolitaire.domain.model.HapticType
 import com.erman.pegsolitaire.domain.usecase.CellClickEvent
 import com.erman.pegsolitaire.domain.usecase.CellClickResult
 import com.erman.pegsolitaire.domain.usecase.CreateBoardUseCase
 import com.erman.pegsolitaire.domain.usecase.GenerateLevelUseCase
+import com.erman.pegsolitaire.domain.usecase.PerformHapticUseCase
 import com.erman.pegsolitaire.domain.usecase.ProcessCellClickUseCase
 import com.erman.pegsolitaire.domain.usecase.SaveLevelProgressUseCase
 import com.erman.pegsolitaire.domain.usecase.SaveScoreUseCase
@@ -36,9 +38,14 @@ class GameViewModel(
     private val createBoardUseCase: CreateBoardUseCase,
     private val saveScoreUseCase: SaveScoreUseCase,
     private val saveLevelProgressUseCase: SaveLevelProgressUseCase,
-    private val generateLevelUseCase: GenerateLevelUseCase
+    private val generateLevelUseCase: GenerateLevelUseCase,
+    private val performHapticUseCase: PerformHapticUseCase
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    init {
+        performHapticUseCase.startObserving(scope)
+    }
 
     private val _state = MutableStateFlow(GameUiState())
     val state: StateFlow<GameUiState> = _state.asStateFlow()
@@ -169,10 +176,14 @@ class GameViewModel(
 
     private fun applyClickResult(gameState: GameState, result: CellClickResult) {
         when (val event = result.event) {
-            is CellClickEvent.Selected -> applySelectionChange(gameState, result)
+            is CellClickEvent.Selected -> {
+                performHapticUseCase(HapticType.SELECTION)
+                applySelectionChange(gameState, result)
+            }
             is CellClickEvent.Deselected -> applySelectionChange(gameState, result)
             is CellClickEvent.Moved -> applyMoveResult(gameState, result, event)
             is CellClickEvent.Invalid -> {
+                performHapticUseCase(HapticType.ERROR)
                 _events.tryEmit(GameEvent.InvalidMove)
                 _state.value = _state.value.copy(pendingInvalidMove = true)
             }
@@ -189,6 +200,7 @@ class GameViewModel(
     }
 
     private fun applyMoveResult(gameState: GameState, result: CellClickResult, event: CellClickEvent.Moved) {
+        performHapticUseCase(HapticType.MOVE)
         result.boardSnapshot?.let { moveHistory.add(it) }
 
         _events.tryEmit(GameEvent.PegMoved(event.move.from, event.move.to, event.move.captured))
@@ -223,6 +235,7 @@ class GameViewModel(
                 } else {
                     saveClassicResult(gameState.boardType, remainingPegs, gameState.elapsedTimeMillis, scoreText)
                 }
+                performHapticUseCase(HapticType.SUCCESS)
             } catch (e: Exception) {
                 _events.tryEmit(GameEvent.GameOver(scoreText))
             }
