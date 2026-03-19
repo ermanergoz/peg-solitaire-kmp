@@ -27,7 +27,7 @@ class ProcessCellClickUseCase(private val gameEngine: GameEngine) {
                 selectedCell = null,
                 remainingPegs = result.board.countPegs(),
                 isGameOver = gameEngine.isGameOver(result.board),
-                boardSnapshot = originalBoard.copy(),
+                boardSnapshot = originalBoard.copyWithoutSelection(),
                 event = CellClickEvent.Moved(result.move)
             )
             is MoveResult.Deselected -> CellClickResult(

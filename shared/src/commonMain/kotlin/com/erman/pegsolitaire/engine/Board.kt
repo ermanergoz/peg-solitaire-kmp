@@ -7,6 +7,15 @@ class Board(private val grid: Array<Array<CellState>>) {
 
     fun copy(): Board = Board(grid.map { it.copyOf() }.toTypedArray())
 
+    fun copyWithoutSelection(): Board {
+        val newGrid = grid.map { row ->
+            row.map { cell ->
+                if (cell == CellState.SELECTED) CellState.PEG else cell
+            }.toTypedArray()
+        }.toTypedArray()
+        return Board(newGrid)
+    }
+
     operator fun get(row: Int, col: Int): CellState = grid[row][col]
 
     internal operator fun set(row: Int, col: Int, value: CellState) {
