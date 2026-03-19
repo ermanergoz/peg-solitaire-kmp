@@ -10,8 +10,8 @@ func boardBackgroundColor(boardType: BoardType, colorScheme: ColorScheme) -> Col
             : Color(red: 0.863, green: 0.894, blue: 0.973)
     case .french:
         return isDark
-            ? Color(red: 0.106, green: 0.114, blue: 0.173)
-            : Color(red: 0.855, green: 0.878, blue: 0.961)
+            ? Color(red: 0.173, green: 0.106, blue: 0.114)
+            : Color(red: 0.961, green: 0.855, blue: 0.878)
     case .german:
         return isDark
             ? Color(red: 0.165, green: 0.141, blue: 0.094)

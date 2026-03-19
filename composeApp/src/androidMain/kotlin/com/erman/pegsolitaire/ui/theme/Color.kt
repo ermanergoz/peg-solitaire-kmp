@@ -41,8 +41,8 @@ val BadgeGray = Color(0xFF9CA3AF)
 private val EnglishBackgroundLight = Color(0xFFDCE4F8)
 private val EnglishBackgroundDark = Color(0xFF1A1E2E)
 
-private val FrenchBackgroundLight = Color(0xFFDAE0F5)
-private val FrenchBackgroundDark = Color(0xFF1B1D2C)
+private val FrenchBackgroundLight = Color(0xFFF5DAE0)
+private val FrenchBackgroundDark = Color(0xFF2C1B1D)
 
 private val GermanBackgroundLight = Color(0xFFF5EDDA)
 private val GermanBackgroundDark = Color(0xFF2A2418)
