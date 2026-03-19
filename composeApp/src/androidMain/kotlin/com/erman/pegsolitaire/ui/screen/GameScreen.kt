@@ -69,6 +69,8 @@ fun GameScreen(
                 onCellClicked = gameViewModel::onCellClicked,
                 onUndoClicked = gameViewModel::onUndoClicked,
                 onResetClicked = gameViewModel::resetGame,
+                onPauseClicked = gameViewModel::pauseTimer,
+                onResumeClicked = gameViewModel::resumeTimer,
                 onRestart = {
                     gameOverEvent = null
                     gameViewModel.resetGame()
@@ -130,6 +132,8 @@ private fun GameContent(
     onCellClicked: (Int, Int) -> Unit,
     onUndoClicked: () -> Unit,
     onResetClicked: () -> Unit,
+    onPauseClicked: () -> Unit,
+    onResumeClicked: () -> Unit,
     onRestart: () -> Unit,
     onQuit: () -> Unit,
     onNextLevel: (Int) -> Unit
@@ -137,6 +141,7 @@ private fun GameContent(
     val scoreText = "${gameState.remainingPegs}$SCORE_SEPARATOR${gameState.totalPegs}"
     val isDark = isSystemInDarkTheme()
     val backgroundColor = boardBackgroundColor(gameState.boardType, isDark)
+    var isPaused by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -146,8 +151,7 @@ private fun GameContent(
     ) {
         GameTopBar(
             scoreText = scoreText,
-            elapsedTimeMillis = gameState.elapsedTimeMillis,
-            onBackClicked = onQuit
+            elapsedTimeMillis = gameState.elapsedTimeMillis
         )
 
         BoardCanvas(
@@ -160,8 +164,13 @@ private fun GameContent(
 
         GameBottomBar(
             canUndo = gameState.canUndo,
+            isPaused = isPaused,
             onUndoClicked = onUndoClicked,
-            onResetClicked = onResetClicked
+            onResetClicked = onResetClicked,
+            onPauseClicked = {
+                isPaused = !isPaused
+                if (isPaused) onPauseClicked() else onResumeClicked()
+            }
         )
     }
 

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.erman.pegsolitaire.ui.theme.BadgeGray
+import com.erman.pegsolitaire.ui.theme.BadgePurple
 import com.erman.pegsolitaire.ui.theme.BadgeRed
 
 private val BUTTON_SIZE = 48.dp
@@ -26,12 +27,16 @@ private val BAR_HORIZONTAL_PADDING = 16.dp
 private val BAR_VERTICAL_PADDING = 12.dp
 private val ICON_FONT_SIZE = 18.sp
 private const val DISABLED_ALPHA = 0.4f
+private const val PAUSE_SYMBOL = "\u2016"
+private const val PLAY_SYMBOL = "\u25B6"
 
 @Composable
 fun GameBottomBar(
     canUndo: Boolean,
+    isPaused: Boolean,
     onUndoClicked: () -> Unit,
     onResetClicked: () -> Unit,
+    onPauseClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -47,6 +52,13 @@ fun GameBottomBar(
                 color = if (canUndo) BadgeGray else BadgeGray.copy(alpha = DISABLED_ALPHA),
                 enabled = canUndo,
                 onClick = onUndoClicked
+            )
+
+            BottomCircleButton(
+                text = if (isPaused) PLAY_SYMBOL else PAUSE_SYMBOL,
+                color = BadgePurple,
+                enabled = true,
+                onClick = onPauseClicked
             )
 
             BottomCircleButton(
