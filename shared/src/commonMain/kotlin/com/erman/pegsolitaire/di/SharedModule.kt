@@ -16,6 +16,7 @@ import com.erman.pegsolitaire.domain.usecase.GetAllBestScoresUseCase
 import com.erman.pegsolitaire.domain.usecase.GetBestScoreUseCase
 import com.erman.pegsolitaire.domain.usecase.GetChallengeLevelsUseCase
 import com.erman.pegsolitaire.domain.usecase.GetHighestCompletedLevelUseCase
+import com.erman.pegsolitaire.domain.usecase.GetHintPositionsUseCase
 import com.erman.pegsolitaire.domain.usecase.GetSettingsUseCase
 import com.erman.pegsolitaire.domain.usecase.PerformHapticUseCase
 import com.erman.pegsolitaire.domain.usecase.ProcessCellClickUseCase
@@ -59,8 +60,9 @@ val sharedModule = module {
     factory { GetSettingsUseCase(get()) }
     factory { UpdateSettingUseCase(get()) }
     factory { PerformHapticUseCase(get(), get()) }
+    factory { GetHintPositionsUseCase(get()) }
     factory { ResetAllScoresUseCase(get(), get()) }
-    factory { GameViewModel(get(), get(), get(), get(), get(), get()) }
+    factory { GameViewModel(get(), get(), get(), get(), get(), get(), get()) }
     factory { HomeViewModel(get(), get(), get()) }
     factory { ChallengeLevelSelectorViewModel(get()) }
     factory { SettingsViewModel(get(), get(), get()) }

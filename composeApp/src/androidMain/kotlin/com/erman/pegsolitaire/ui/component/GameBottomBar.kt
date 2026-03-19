@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.erman.pegsolitaire.ui.theme.BadgeGray
+import com.erman.pegsolitaire.ui.theme.BadgeOrange
 import com.erman.pegsolitaire.ui.theme.BadgePurple
 import com.erman.pegsolitaire.ui.theme.BadgeRed
 
@@ -30,14 +31,18 @@ private val ICON_FONT_SIZE = 18.sp
 private const val DISABLED_ALPHA = 0.4f
 private const val PAUSE_SYMBOL = "\u2016"
 private const val PLAY_SYMBOL = "\u25B6"
+private const val HINT_SYMBOL = "\uD83D\uDCA1"
+private const val ACTIVE_HINT_ALPHA = 0.5f
 
 @Composable
 fun GameBottomBar(
     canUndo: Boolean,
     isPaused: Boolean,
+    hintsEnabled: Boolean,
     onUndoClicked: () -> Unit,
     onResetClicked: () -> Unit,
     onPauseClicked: () -> Unit,
+    onHintClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -68,6 +73,13 @@ fun GameBottomBar(
                 color = BadgeRed,
                 enabled = true,
                 onClick = onResetClicked
+            )
+
+            BottomCircleButton(
+                text = HINT_SYMBOL,
+                color = if (hintsEnabled) BadgeOrange.copy(alpha = ACTIVE_HINT_ALPHA) else BadgeOrange,
+                enabled = true,
+                onClick = onHintClicked
             )
         }
     }

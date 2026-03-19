@@ -8,6 +8,7 @@ private let badgeGreen = Color(red: 0.290, green: 0.871, blue: 0.502)
 private let badgeBlue = Color(red: 0.376, green: 0.647, blue: 0.980)
 private let badgeRed = Color(red: 0.937, green: 0.267, blue: 0.267)
 private let badgeGray = Color(red: 0.612, green: 0.639, blue: 0.686)
+private let badgeOrange = Color(red: 0.961, green: 0.620, blue: 0.043)
 
 private let bottomButtonSize: CGFloat = 48
 private let pillHPadding: CGFloat = 14
@@ -20,6 +21,8 @@ private let swipeBackThreshold: CGFloat = 100
 
 private let pauseSymbol = "\u{2016}"
 private let playSymbol = "\u{25B6}"
+private let hintSymbol = "\u{1F4A1}"
+private let activeHintAlpha: Double = 0.5
 
 struct GameView: View {
     let boardType: BoardType?
@@ -57,6 +60,8 @@ struct GameView: View {
                 GameContentView(
                     state: state,
                     isPaused: isPaused,
+                    hintsEnabled: viewModel.hintsEnabled,
+                    hintPositions: viewModel.hintPositions,
                     onCellClicked: viewModel.onCellClicked,
                     onUndo: viewModel.undo,
                     onReset: viewModel.reset,
@@ -68,6 +73,7 @@ struct GameView: View {
                             viewModel.resumeTimer()
                         }
                     },
+                    onHint: viewModel.toggleHints,
                     moveAnim: viewModel.lastMoveAnim,
                     onMoveAnimFinished: { viewModel.clearPendingMove() },
                     isShaking: viewModel.isInvalidMove,
@@ -150,10 +156,13 @@ private struct ErrorContentView: View {
 private struct GameContentView: View {
     let state: GameState
     let isPaused: Bool
+    let hintsEnabled: Bool
+    let hintPositions: Set<PositionKey>
     let onCellClicked: (Int32, Int32) -> Void
     let onUndo: () -> Void
     let onReset: () -> Void
     let onPause: () -> Void
+    let onHint: () -> Void
     var moveAnim: MoveAnimData? = nil
     var onMoveAnimFinished: (() -> Void)? = nil
     var isShaking: Bool = false
@@ -178,6 +187,7 @@ private struct GameContentView: View {
                 BoardView(
                     board: state.board,
                     onCellClicked: onCellClicked,
+                    hintPositions: hintPositions,
                     moveAnim: moveAnim,
                     onMoveAnimFinished: onMoveAnimFinished,
                     isShaking: isShaking,
@@ -188,9 +198,11 @@ private struct GameContentView: View {
                 GameBottomBarView(
                     canUndo: state.canUndo,
                     isPaused: isPaused,
+                    hintsEnabled: hintsEnabled,
                     onUndo: onUndo,
                     onPause: onPause,
-                    onReset: onReset
+                    onReset: onReset,
+                    onHint: onHint
                 )
             }
 
@@ -245,9 +257,11 @@ private struct PauseOverlayView: View {
 private struct GameBottomBarView: View {
     let canUndo: Bool
     let isPaused: Bool
+    let hintsEnabled: Bool
     let onUndo: () -> Void
     let onPause: () -> Void
     let onReset: () -> Void
+    let onHint: () -> Void
 
     var body: some View {
         HStack(spacing: 16) {
@@ -265,6 +279,12 @@ private struct GameBottomBarView: View {
             )
 
             BottomCircleButton(symbol: "\u{21BB}", color: badgeRed, action: onReset)
+
+            BottomCircleButton(
+                symbol: hintSymbol,
+                color: hintsEnabled ? badgeOrange.opacity(activeHintAlpha) : badgeOrange,
+                action: onHint
+            )
         }
         .padding(.horizontal, barHPadding)
         .padding(.vertical, barVPadding)

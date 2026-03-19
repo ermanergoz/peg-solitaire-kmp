@@ -29,6 +29,9 @@ private let pegInnerColor = Color(red: 1.0, green: 0.482, blue: 0.584)
 private let selectedOuterColor = Color(red: 1.0, green: 0.843, blue: 0.0)
 private let selectedInnerColor = Color(red: 1.0, green: 0.94, blue: 0.39)
 private let selectedGlowColor = Color(red: 1.0, green: 0.843, blue: 0.0)
+private let hintSlotEdgeAlpha: Double = 1.0
+private let hintGradientMidStop: CGFloat = 0.5
+
 private let slotColorLight = Color(red: 0.745, green: 0.769, blue: 0.816)
 private let slotColorDark = Color(red: 0.227, green: 0.247, blue: 0.290)
 
@@ -44,6 +47,7 @@ struct MoveAnimData: Equatable {
 struct BoardView: View {
     let board: Board
     let onCellClicked: (Int32, Int32) -> Void
+    var hintPositions: Set<PositionKey> = []
     var moveAnim: MoveAnimData? = nil
     var onMoveAnimFinished: (() -> Void)? = nil
     var isShaking: Bool = false
@@ -181,6 +185,9 @@ struct BoardView: View {
                     drawSlot(context: &context, center: center, radius: layout.pegRadius)
                 } else if board.isEmpty(row: r, col: c) {
                     drawSlot(context: &context, center: center, radius: layout.pegRadius)
+                    if hintPositions.contains(PositionKey(row: r, col: c)) {
+                        drawHintSlot(context: &context, center: center, radius: layout.pegRadius)
+                    }
                 } else if board.isSelected(row: r, col: c) {
                     drawSelectionGlow(context: &context, center: center, radius: layout.pegRadius, glowRadius: animRadius, glowAlpha: animAlpha)
                     drawPeg(context: &context, center: center, radius: layout.pegRadius, isSelected: true)
@@ -229,6 +236,21 @@ struct BoardView: View {
     private func drawSlot(context: inout GraphicsContext, center: CGPoint, radius: CGFloat) {
         let path = circlePath(center: center, radius: radius)
         context.fill(path, with: .color(slotColor.opacity(slotAlpha)))
+    }
+
+    private func drawHintSlot(context: inout GraphicsContext, center: CGPoint, radius: CGFloat) {
+        let path = circlePath(center: center, radius: radius)
+        let edgeColor = slotColor.opacity(hintSlotEdgeAlpha)
+        context.fill(path, with: .radialGradient(
+            Gradient(stops: [
+                .init(color: Color.clear, location: 0),
+                .init(color: Color.clear, location: hintGradientMidStop),
+                .init(color: edgeColor, location: 1)
+            ]),
+            center: center,
+            startRadius: 0,
+            endRadius: radius
+        ))
     }
 
     private func drawPeg(context: inout GraphicsContext, center: CGPoint, radius: CGFloat, isSelected: Bool) {
