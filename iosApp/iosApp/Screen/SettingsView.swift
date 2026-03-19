@@ -14,17 +14,11 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: sectionSpacing) {
-            HStack {
-                Button(action: onBack) {
-                    Image(systemName: "chevron.left")
-                        .font(.title2)
-                }
-                Text("Settings")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.pink)
-                Spacer()
-            }
+            Text("Settings")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.pink)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack(spacing: 0) {
                 Toggle("Sound Effects", isOn: Binding(
