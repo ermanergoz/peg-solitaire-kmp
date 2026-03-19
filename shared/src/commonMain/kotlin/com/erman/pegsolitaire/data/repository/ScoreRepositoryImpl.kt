@@ -35,4 +35,8 @@ class ScoreRepositoryImpl(database: PegSolitaireDatabase) : ScoreRepository {
         queries.insertScore(boardType.name, remainingPegs.toLong(), elapsedTimeMillis)
         queries.cleanupOldScores()
     }
+
+    override suspend fun clearAllScores() = withContext(Dispatchers.IO) {
+        queries.deleteAllScores()
+    }
 }
