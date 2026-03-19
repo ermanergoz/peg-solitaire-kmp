@@ -31,6 +31,7 @@ import com.erman.pegsolitaire.presentation.GameEvent
 import com.erman.pegsolitaire.presentation.GameViewModel
 import com.erman.pegsolitaire.presentation.SCORE_SEPARATOR
 import com.erman.pegsolitaire.ui.component.BoardCanvas
+import com.erman.pegsolitaire.ui.component.GameBottomBar
 import com.erman.pegsolitaire.ui.component.GameOverDialog
 import com.erman.pegsolitaire.ui.component.GameTopBar
 import com.erman.pegsolitaire.ui.theme.boardBackgroundColor
@@ -146,9 +147,7 @@ private fun GameContent(
         GameTopBar(
             scoreText = scoreText,
             elapsedTimeMillis = gameState.elapsedTimeMillis,
-            canUndo = gameState.canUndo,
-            onUndoClicked = onUndoClicked,
-            onResetClicked = onResetClicked
+            onBackClicked = onQuit
         )
 
         BoardCanvas(
@@ -157,6 +156,12 @@ private fun GameContent(
             modifier = Modifier
                 .weight(1f)
                 .padding(16.dp)
+        )
+
+        GameBottomBar(
+            canUndo = gameState.canUndo,
+            onUndoClicked = onUndoClicked,
+            onResetClicked = onResetClicked
         )
     }
 
