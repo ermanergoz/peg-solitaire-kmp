@@ -163,19 +163,25 @@ private struct GameContentView: View {
     }
 
     var body: some View {
-        VStack {
-            GameTopBarView(scoreText: scoreText, timeText: timeText)
+        ZStack {
+            VStack {
+                GameTopBarView(scoreText: scoreText, timeText: timeText)
 
-            BoardView(board: state.board, onCellClicked: onCellClicked)
-                .padding()
+                BoardView(board: state.board, onCellClicked: onCellClicked)
+                    .padding()
 
-            GameBottomBarView(
-                canUndo: state.canUndo,
-                isPaused: isPaused,
-                onUndo: onUndo,
-                onPause: onPause,
-                onReset: onReset
-            )
+                GameBottomBarView(
+                    canUndo: state.canUndo,
+                    isPaused: isPaused,
+                    onUndo: onUndo,
+                    onPause: onPause,
+                    onReset: onReset
+                )
+            }
+
+            if isPaused {
+                PauseOverlayView(onResume: onPause)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(boardBackgroundColor(boardType: state.boardType, colorScheme: colorScheme))
@@ -193,6 +199,31 @@ private struct GameTopBarView: View {
         }
         .padding(.horizontal, barHPadding)
         .padding(.vertical, barVPadding)
+    }
+}
+
+private let overlayAlpha: Double = 0.5
+private let playIconSize: CGFloat = 80
+
+private struct PauseOverlayView: View {
+    let onResume: () -> Void
+
+    var body: some View {
+        Color.black.opacity(overlayAlpha)
+            .ignoresSafeArea()
+            .onTapGesture(perform: onResume)
+            .overlay {
+                Canvas { context, size in
+                    let path = Path { p in
+                        p.move(to: CGPoint(x: size.width * 0.2, y: 0))
+                        p.addLine(to: CGPoint(x: size.width, y: size.height / 2))
+                        p.addLine(to: CGPoint(x: size.width * 0.2, y: size.height))
+                        p.closeSubpath()
+                    }
+                    context.fill(path, with: .color(.white.opacity(0.9)))
+                }
+                .frame(width: playIconSize, height: playIconSize)
+            }
     }
 }
 
