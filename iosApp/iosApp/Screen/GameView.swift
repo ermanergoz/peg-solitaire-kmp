@@ -3,6 +3,22 @@ import Shared
 
 private let scoreSeparator = " / "
 
+private let badgePurple = Color(red: 0.424, green: 0.388, blue: 1.0)
+private let badgeGreen = Color(red: 0.290, green: 0.871, blue: 0.502)
+private let badgeBlue = Color(red: 0.376, green: 0.647, blue: 0.980)
+private let badgeRed = Color(red: 0.937, green: 0.267, blue: 0.267)
+private let badgeGray = Color(red: 0.612, green: 0.639, blue: 0.686)
+
+private let iconSize: CGFloat = 40
+private let bottomButtonSize: CGFloat = 48
+private let pillCornerRadius: CGFloat = 20
+private let pillHPadding: CGFloat = 14
+private let pillVPadding: CGFloat = 8
+private let barHPadding: CGFloat = 16
+private let barVPadding: CGFloat = 12
+private let badgeFontSize: CGFloat = 15
+private let disabledAlpha: Double = 0.4
+
 struct GameView: View {
     let boardType: BoardType?
     let levelNumber: Int32?
@@ -39,7 +55,8 @@ struct GameView: View {
                     state: state,
                     onCellClicked: viewModel.onCellClicked,
                     onUndo: viewModel.undo,
-                    onReset: viewModel.reset
+                    onReset: viewModel.reset,
+                    onBack: onQuit
                 )
             } else {
                 ProgressView()
@@ -110,6 +127,7 @@ private struct GameContentView: View {
     let onCellClicked: (Int32, Int32) -> Void
     let onUndo: () -> Void
     let onReset: () -> Void
+    let onBack: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -127,13 +145,17 @@ private struct GameContentView: View {
             GameTopBarView(
                 scoreText: scoreText,
                 timeText: timeText,
-                canUndo: state.canUndo,
-                onUndo: onUndo,
-                onReset: onReset
+                onBack: onBack
             )
 
             BoardView(board: state.board, onCellClicked: onCellClicked)
                 .padding()
+
+            GameBottomBarView(
+                canUndo: state.canUndo,
+                onUndo: onUndo,
+                onReset: onReset
+            )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(boardBackgroundColor(boardType: state.boardType, colorScheme: colorScheme))
@@ -143,30 +165,87 @@ private struct GameContentView: View {
 private struct GameTopBarView: View {
     let scoreText: String
     let timeText: String
+    let onBack: () -> Void
+
+    var body: some View {
+        HStack(spacing: 10) {
+            CircleIconButton(symbol: "\u{2190}", color: badgePurple, action: onBack)
+            PillBadge(text: scoreText, color: badgeGreen)
+            PillBadge(text: timeText, color: badgeBlue)
+            Spacer()
+        }
+        .padding(.horizontal, barHPadding)
+        .padding(.vertical, barVPadding)
+    }
+}
+
+private struct GameBottomBarView: View {
     let canUndo: Bool
     let onUndo: () -> Void
     let onReset: () -> Void
 
     var body: some View {
-        HStack {
-            Button(action: onUndo) {
-                Text("\u{21A9}").font(.title2)
-            }
+        HStack(spacing: 16) {
+            BottomCircleButton(
+                symbol: "\u{21A9}",
+                color: canUndo ? badgeGray : badgeGray.opacity(disabledAlpha),
+                action: onUndo
+            )
             .disabled(!canUndo)
 
-            Spacer()
-            Text(timeText).font(.headline)
-            Spacer()
-            Text(scoreText)
-                .font(.headline)
-                .foregroundColor(.pink)
-            Spacer()
-
-            Button(action: onReset) {
-                Text("\u{21BB}").font(.title2)
-            }
+            BottomCircleButton(symbol: "\u{21BB}", color: badgeRed, action: onReset)
         }
-        .padding(.horizontal)
+        .padding(.horizontal, barHPadding)
+        .padding(.vertical, barVPadding)
+    }
+}
+
+private struct CircleIconButton: View {
+    let symbol: String
+    let color: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(symbol)
+                .font(.system(size: badgeFontSize, weight: .bold))
+                .foregroundColor(.white)
+                .frame(width: iconSize, height: iconSize)
+                .background(color)
+                .clipShape(Circle())
+        }
+    }
+}
+
+private struct PillBadge: View {
+    let text: String
+    let color: Color
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: badgeFontSize, weight: .bold))
+            .foregroundColor(.white)
+            .padding(.horizontal, pillHPadding)
+            .padding(.vertical, pillVPadding)
+            .background(color)
+            .clipShape(Capsule())
+    }
+}
+
+private struct BottomCircleButton: View {
+    let symbol: String
+    let color: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(symbol)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundColor(.white)
+                .frame(width: bottomButtonSize, height: bottomButtonSize)
+                .background(color)
+                .clipShape(Circle())
+        }
     }
 }
 

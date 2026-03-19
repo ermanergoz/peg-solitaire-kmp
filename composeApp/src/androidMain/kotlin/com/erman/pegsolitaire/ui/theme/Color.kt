@@ -30,6 +30,13 @@ val TextSecondaryDark = Color(0xFFB0A0C0)
 val CardBackgroundLight = Color(0xFFFFFFFF)
 val CardBackgroundDark = Color(0xFF2A1F3A)
 
+// Game bar pill/badge colors
+val BadgePurple = Color(0xFF6C63FF)
+val BadgeGreen = Color(0xFF4ADE80)
+val BadgeBlue = Color(0xFF60A5FA)
+val BadgeRed = Color(0xFFEF4444)
+val BadgeGray = Color(0xFF9CA3AF)
+
 // Board-themed backgrounds inspired by country flags
 private val EnglishBackgroundLight = Color(0xFFDCE4F8)
 private val EnglishBackgroundDark = Color(0xFF1A1E2E)
