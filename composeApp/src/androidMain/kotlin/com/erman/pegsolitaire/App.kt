@@ -53,7 +53,7 @@ fun App() {
             )
             is Screen.ChallengeGame -> ChallengeGameRoute(
                 levelNumber = screen.levelNumber,
-                onQuit = { currentScreen = Screen.Menu }
+                onQuit = { currentScreen = Screen.ChallengeLevelSelector }
             )
         }
     }

@@ -41,7 +41,7 @@ struct ContentView: View {
                 GameView(
                     boardType: nil,
                     levelNumber: levelNumber,
-                    onQuit: { router.currentScreen = .menu }
+                    onQuit: { router.currentScreen = .challengeLevelSelector }
                 )
             case .settings:
                 SettingsView(
