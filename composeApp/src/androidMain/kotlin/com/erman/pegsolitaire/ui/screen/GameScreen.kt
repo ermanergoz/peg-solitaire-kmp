@@ -1,6 +1,9 @@
 package com.erman.pegsolitaire.ui.screen
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +28,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
 import com.erman.pegsolitaire.domain.model.GameState
 import com.erman.pegsolitaire.engine.BoardType
@@ -143,35 +149,44 @@ private fun GameContent(
     val backgroundColor = boardBackgroundColor(gameState.boardType, isDark)
     var isPaused by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(backgroundColor),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        GameTopBar(
-            scoreText = scoreText,
-            elapsedTimeMillis = gameState.elapsedTimeMillis
-        )
-
-        BoardCanvas(
-            board = gameState.board,
-            onCellClicked = onCellClicked,
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .weight(1f)
-                .padding(16.dp)
-        )
+                .fillMaxSize()
+                .background(backgroundColor),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            GameTopBar(
+                scoreText = scoreText,
+                elapsedTimeMillis = gameState.elapsedTimeMillis
+            )
 
-        GameBottomBar(
-            canUndo = gameState.canUndo,
-            isPaused = isPaused,
-            onUndoClicked = onUndoClicked,
-            onResetClicked = onResetClicked,
-            onPauseClicked = {
-                isPaused = !isPaused
-                if (isPaused) onPauseClicked() else onResumeClicked()
-            }
-        )
+            BoardCanvas(
+                board = gameState.board,
+                onCellClicked = onCellClicked,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
+            )
+
+            GameBottomBar(
+                canUndo = gameState.canUndo,
+                isPaused = isPaused,
+                onUndoClicked = onUndoClicked,
+                onResetClicked = onResetClicked,
+                onPauseClicked = {
+                    isPaused = !isPaused
+                    if (isPaused) onPauseClicked() else onResumeClicked()
+                }
+            )
+        }
+
+        if (isPaused) {
+            PauseOverlay(onResume = {
+                isPaused = false
+                onResumeClicked()
+            })
+        }
     }
 
     if (gameOverEvent != null) {
@@ -186,5 +201,33 @@ private fun GameContent(
                 { onNextLevel(nextLevelNumber) }
             } else null
         )
+    }
+}
+
+private const val OVERLAY_ALPHA = 0.5f
+private val PLAY_ICON_SIZE = 80.dp
+
+@Composable
+private fun PauseOverlay(onResume: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = OVERLAY_ALPHA))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onResume
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.size(PLAY_ICON_SIZE)) {
+            val path = Path().apply {
+                moveTo(size.width * 0.2f, 0f)
+                lineTo(size.width, size.height / 2f)
+                lineTo(size.width * 0.2f, size.height)
+                close()
+            }
+            drawPath(path, Color.White.copy(alpha = 0.9f))
+        }
     }
 }
