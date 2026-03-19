@@ -1,6 +1,11 @@
 import SwiftUI
 import Shared
 
+struct PositionKey: Hashable {
+    let row: Int32
+    let col: Int32
+}
+
 class GameViewModelWrapper: ObservableObject {
     private let viewModel: GameViewModel
     private let stateCollector: FlowCollector<GameUiState>
@@ -12,6 +17,8 @@ class GameViewModelWrapper: ObservableObject {
     @Published var lastGameOverScore: GameOverInfo? = nil
     @Published var lastMoveAnim: MoveAnimData? = nil
     @Published var isInvalidMove: Bool = false
+    @Published var hintsEnabled: Bool = false
+    @Published var hintPositions: Set<PositionKey> = []
 
     init() {
         viewModel = KoinHelper().getGameViewModel()
@@ -42,6 +49,20 @@ class GameViewModelWrapper: ObservableObject {
 
             if uiState.pendingInvalidMove != self.isInvalidMove {
                 self.isInvalidMove = uiState.pendingInvalidMove
+            }
+
+            if uiState.hintsEnabled != self.hintsEnabled {
+                self.hintsEnabled = uiState.hintsEnabled
+            }
+
+            var newHintPositions = Set<PositionKey>()
+            for item in uiState.hintPositions {
+                if let pos = item as? Position {
+                    newHintPositions.insert(PositionKey(row: pos.row, col: pos.col))
+                }
+            }
+            if newHintPositions != self.hintPositions {
+                self.hintPositions = newHintPositions
             }
         }
 
@@ -95,6 +116,10 @@ class GameViewModelWrapper: ObservableObject {
 
     func resumeTimer() {
         viewModel.resumeTimer()
+    }
+
+    func toggleHints() {
+        viewModel.toggleHints()
     }
 
     deinit {

@@ -54,6 +54,8 @@ private const val GRADIENT_OFFSET_FACTOR = 0.25f
 private const val SLOT_ALPHA = 0.35f
 private const val BODY_GRADIENT_RADIUS_FACTOR = 1.2f
 private const val SHINE_VERTICAL_OFFSET_FACTOR = 0.3f
+private const val HINT_SLOT_EDGE_ALPHA = 1.0f
+private const val HINT_GRADIENT_MID_STOP = 0.5f
 private const val MOVE_ANIMATION_DURATION_MS = 250
 private const val SHAKE_DURATION_MS = 400
 private const val SHAKE_AMPLITUDE = 12f
@@ -76,6 +78,7 @@ fun BoardCanvas(
     onMoveAnimationFinished: () -> Unit,
     isShaking: Boolean,
     onShakeFinished: () -> Unit,
+    hintPositions: Set<Position> = emptySet(),
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -166,10 +169,15 @@ fun BoardCanvas(
                 val isAnimSource = anim != null && anim.from.row == row && anim.from.col == col
                 val isAnimCaptured = anim != null && anim.captured.row == row && anim.captured.col == col
 
+                val isHinted = hintPositions.contains(Position(row, col))
+
                 when {
                     isAnimSource -> drawPegSlot(center, radius, slotColor)
                     isAnimCaptured -> drawPegSlot(center, radius, slotColor)
-                    board.isEmpty(row, col) -> drawPegSlot(center, radius, slotColor)
+                    board.isEmpty(row, col) -> {
+                        drawPegSlot(center, radius, slotColor)
+                        if (isHinted) drawHintSlot(center, radius - PEG_MARGIN, slotColor)
+                    }
                     board.isSelected(row, col) -> drawPeg(
                         center, radius, isSelected = true,
                         glowRadiusFactor = glowRadiusFactor,
@@ -235,6 +243,23 @@ private fun DrawScope.drawVortexPeg(center: Offset, radius: Float, scale: Float,
         drawPegBody(center, pegRadius, isSelected = false)
         drawShineHighlight(center, pegRadius)
     }
+}
+
+private fun DrawScope.drawHintSlot(center: Offset, radius: Float, slotColor: Color) {
+    val edgeColor = slotColor.copy(alpha = HINT_SLOT_EDGE_ALPHA)
+    drawCircle(
+        brush = Brush.radialGradient(
+            colorStops = arrayOf(
+                0f to Color.Transparent,
+                HINT_GRADIENT_MID_STOP to Color.Transparent,
+                1f to edgeColor
+            ),
+            center = center,
+            radius = radius
+        ),
+        radius = radius,
+        center = center
+    )
 }
 
 private fun DrawScope.drawSelectionGlow(

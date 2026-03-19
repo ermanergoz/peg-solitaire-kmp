@@ -7,6 +7,7 @@ import com.erman.pegsolitaire.domain.usecase.CellClickEvent
 import com.erman.pegsolitaire.domain.usecase.CellClickResult
 import com.erman.pegsolitaire.domain.usecase.CreateBoardUseCase
 import com.erman.pegsolitaire.domain.usecase.GenerateLevelUseCase
+import com.erman.pegsolitaire.domain.usecase.GetHintPositionsUseCase
 import com.erman.pegsolitaire.domain.usecase.PerformHapticUseCase
 import com.erman.pegsolitaire.domain.usecase.ProcessCellClickUseCase
 import com.erman.pegsolitaire.domain.usecase.SaveLevelProgressUseCase
@@ -39,7 +40,8 @@ class GameViewModel(
     private val saveScoreUseCase: SaveScoreUseCase,
     private val saveLevelProgressUseCase: SaveLevelProgressUseCase,
     private val generateLevelUseCase: GenerateLevelUseCase,
-    private val performHapticUseCase: PerformHapticUseCase
+    private val performHapticUseCase: PerformHapticUseCase,
+    private val getHintPositionsUseCase: GetHintPositionsUseCase
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
@@ -147,7 +149,13 @@ class GameViewModel(
         val deferred = pendingGameState
         pendingGameState = null
         if (deferred != null) {
-            _state.value = _state.value.copy(gameState = deferred, pendingMove = null)
+            val currentState = _state.value
+            val hintPositions = if (currentState.hintsEnabled) {
+                getHintPositionsUseCase(deferred.board)
+            } else {
+                emptySet()
+            }
+            _state.value = currentState.copy(gameState = deferred, pendingMove = null, hintPositions = hintPositions)
         } else {
             _state.value = _state.value.copy(pendingMove = null)
         }
@@ -168,6 +176,18 @@ class GameViewModel(
     fun resumeTimer() {
         val gameState = _state.value.gameState ?: return
         if (!gameState.isGameOver) startTimer()
+    }
+
+    fun toggleHints() {
+        val currentState = _state.value
+        val newHintsEnabled = !currentState.hintsEnabled
+        val board = currentState.gameState?.board
+        val hintPositions = if (newHintsEnabled && board != null) {
+            getHintPositionsUseCase(board)
+        } else {
+            emptySet()
+        }
+        _state.value = currentState.copy(hintsEnabled = newHintsEnabled, hintPositions = hintPositions)
     }
 
     fun onCleared() {
@@ -263,7 +283,13 @@ class GameViewModel(
     }
 
     private fun updateGameState(gameState: GameState) {
-        _state.value = _state.value.copy(gameState = gameState)
+        val currentState = _state.value
+        val hintPositions = if (currentState.hintsEnabled) {
+            getHintPositionsUseCase(gameState.board)
+        } else {
+            emptySet()
+        }
+        _state.value = currentState.copy(gameState = gameState, hintPositions = hintPositions)
     }
 
     private fun startTimer() {

@@ -41,6 +41,7 @@ import com.erman.pegsolitaire.ui.component.GameBottomBar
 import com.erman.pegsolitaire.ui.component.GameOverDialog
 import com.erman.pegsolitaire.ui.component.GameTopBar
 import com.erman.pegsolitaire.ui.component.MoveAnimationData
+import com.erman.pegsolitaire.engine.Position
 import com.erman.pegsolitaire.ui.theme.boardBackgroundColor
 
 @Composable
@@ -88,11 +89,14 @@ fun GameScreen(
                 onMoveAnimationFinished = gameViewModel::clearPendingMove,
                 isShaking = uiState.pendingInvalidMove,
                 onShakeFinished = gameViewModel::clearPendingInvalidMove,
+                hintPositions = uiState.hintPositions,
+                hintsEnabled = uiState.hintsEnabled,
                 onCellClicked = gameViewModel::onCellClicked,
                 onUndoClicked = gameViewModel::onUndoClicked,
                 onResetClicked = gameViewModel::resetGame,
                 onPauseClicked = gameViewModel::pauseTimer,
                 onResumeClicked = gameViewModel::resumeTimer,
+                onHintClicked = gameViewModel::toggleHints,
                 onRestart = {
                     gameOverEvent = null
                     gameViewModel.resetGame()
@@ -139,11 +143,14 @@ private fun GameContent(
     onMoveAnimationFinished: () -> Unit,
     isShaking: Boolean,
     onShakeFinished: () -> Unit,
+    hintPositions: Set<Position>,
+    hintsEnabled: Boolean,
     onCellClicked: (Int, Int) -> Unit,
     onUndoClicked: () -> Unit,
     onResetClicked: () -> Unit,
     onPauseClicked: () -> Unit,
     onResumeClicked: () -> Unit,
+    onHintClicked: () -> Unit,
     onRestart: () -> Unit,
     onQuit: () -> Unit,
     onNextLevel: (Int) -> Unit
@@ -172,6 +179,7 @@ private fun GameContent(
                 onMoveAnimationFinished = onMoveAnimationFinished,
                 isShaking = isShaking,
                 onShakeFinished = onShakeFinished,
+                hintPositions = hintPositions,
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp)
@@ -180,12 +188,14 @@ private fun GameContent(
             GameBottomBar(
                 canUndo = gameState.canUndo,
                 isPaused = isPaused,
+                hintsEnabled = hintsEnabled,
                 onUndoClicked = onUndoClicked,
                 onResetClicked = onResetClicked,
                 onPauseClicked = {
                     isPaused = !isPaused
                     if (isPaused) onPauseClicked() else onResumeClicked()
-                }
+                },
+                onHintClicked = onHintClicked
             )
         }
 

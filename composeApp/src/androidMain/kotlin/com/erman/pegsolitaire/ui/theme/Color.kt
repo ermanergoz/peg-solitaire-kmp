@@ -36,6 +36,7 @@ val BadgeGreen = Color(0xFF4ADE80)
 val BadgeBlue = Color(0xFF60A5FA)
 val BadgeRed = Color(0xFFEF4444)
 val BadgeGray = Color(0xFF9CA3AF)
+val BadgeOrange = Color(0xFFF59E0B)
 
 // Board-themed backgrounds inspired by country flags
 private val EnglishBackgroundLight = Color(0xFFDCE4F8)
