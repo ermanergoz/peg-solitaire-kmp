@@ -6,7 +6,11 @@ private let shadowOffsetX: CGFloat = 0
 private let shadowOffsetY: CGFloat = 3
 private let shadowOpacity: Double = 0.16
 private let shadowRadiusFactor: CGFloat = 1.05
-private let glowRadiusFactor: CGFloat = 1.5
+private let glowRadiusMin: CGFloat = 1.3
+private let glowRadiusMax: CGFloat = 1.6
+private let glowAlphaMin: Double = 0.15
+private let glowAlphaMax: Double = 0.25
+private let glowPulseDuration: Double = 0.8
 private let shineRadiusFactor: CGFloat = 0.35
 private let shineOffsetFactor: CGFloat = 0.25
 private let shineVerticalOffsetFactor: CGFloat = 0.3
@@ -19,7 +23,7 @@ private let pegOuterColor = Color(red: 0.91, green: 0.227, blue: 0.365)
 private let pegInnerColor = Color(red: 1.0, green: 0.482, blue: 0.584)
 private let selectedOuterColor = Color(red: 1.0, green: 0.843, blue: 0.0)
 private let selectedInnerColor = Color(red: 1.0, green: 0.94, blue: 0.39)
-private let selectedGlowColor = Color(red: 1.0, green: 0.843, blue: 0.0, opacity: 0.25)
+private let selectedGlowColor = Color(red: 1.0, green: 0.843, blue: 0.0)
 private let slotColorLight = Color(red: 0.745, green: 0.769, blue: 0.816)
 private let slotColorDark = Color(red: 0.227, green: 0.247, blue: 0.290)
 
@@ -28,9 +32,18 @@ struct BoardView: View {
     let onCellClicked: (Int32, Int32) -> Void
 
     @Environment(\.colorScheme) private var colorScheme
+    @State private var glowPulse = false
 
     private var slotColor: Color {
         colorScheme == .dark ? slotColorDark : slotColorLight
+    }
+
+    private var currentGlowRadius: CGFloat {
+        glowPulse ? glowRadiusMax : glowRadiusMin
+    }
+
+    private var currentGlowAlpha: Double {
+        glowPulse ? glowAlphaMax : glowAlphaMin
     }
 
     var body: some View {
@@ -46,6 +59,11 @@ struct BoardView: View {
             }
         }
         .aspectRatio(CGFloat(board.cols) / CGFloat(board.rows), contentMode: .fit)
+        .onAppear {
+            withAnimation(.easeInOut(duration: glowPulseDuration).repeatForever(autoreverses: true)) {
+                glowPulse = true
+            }
+        }
     }
 
     private func drawBoard(context: inout GraphicsContext, layout: BoardLayout) {
@@ -90,9 +108,9 @@ struct BoardView: View {
     }
 
     private func drawSelectionGlow(context: inout GraphicsContext, center: CGPoint, radius: CGFloat) {
-        let glowRadius = radius * glowRadiusFactor
+        let glowRadius = radius * currentGlowRadius
         let path = circlePath(center: center, radius: glowRadius)
-        context.fill(path, with: .color(selectedGlowColor))
+        context.fill(path, with: .color(selectedGlowColor.opacity(currentGlowAlpha)))
     }
 
     private func drawDropShadow(context: inout GraphicsContext, center: CGPoint, radius: CGFloat) {

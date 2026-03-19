@@ -1,11 +1,17 @@
 package com.erman.pegsolitaire.ui.component
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -27,7 +33,11 @@ private const val SHADOW_OFFSET_Y = 3f
 private const val SHADOW_ALPHA = 40
 private const val SHADOW_RADIUS_FACTOR = 1.05f
 private const val SHINE_ALPHA = 160
-private const val GLOW_RADIUS_FACTOR = 1.5f
+private const val GLOW_RADIUS_MIN = 1.3f
+private const val GLOW_RADIUS_MAX = 1.6f
+private const val GLOW_ALPHA_MIN = 0.6f
+private const val GLOW_ALPHA_MAX = 1.0f
+private const val GLOW_PULSE_DURATION_MS = 800
 private const val SHINE_RADIUS_FACTOR = 0.35f
 private const val SHINE_OFFSET_FACTOR = 0.25f
 private const val GRADIENT_OFFSET_FACTOR = 0.25f
@@ -46,6 +56,26 @@ fun BoardCanvas(
     val isDark = isSystemInDarkTheme()
     val slotColor = if (isDark) PegSlotColorDark else PegSlotColorLight
     val aspectRatio = board.cols.toFloat() / board.rows.toFloat()
+
+    val pulseTransition = rememberInfiniteTransition(label = "selectionPulse")
+    val glowRadiusFactor by pulseTransition.animateFloat(
+        initialValue = GLOW_RADIUS_MIN,
+        targetValue = GLOW_RADIUS_MAX,
+        animationSpec = infiniteRepeatable(
+            animation = tween(GLOW_PULSE_DURATION_MS),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glowRadius"
+    )
+    val glowAlpha by pulseTransition.animateFloat(
+        initialValue = GLOW_ALPHA_MIN,
+        targetValue = GLOW_ALPHA_MAX,
+        animationSpec = infiniteRepeatable(
+            animation = tween(GLOW_PULSE_DURATION_MS),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glowAlpha"
+    )
 
     Canvas(
         modifier = modifier
@@ -75,7 +105,11 @@ fun BoardCanvas(
 
                 when {
                     board.isEmpty(row, col) -> drawPegSlot(center, radius, slotColor)
-                    board.isSelected(row, col) -> drawPeg(center, radius, isSelected = true)
+                    board.isSelected(row, col) -> drawPeg(
+                        center, radius, isSelected = true,
+                        glowRadiusFactor = glowRadiusFactor,
+                        glowAlpha = glowAlpha
+                    )
                     board.isPeg(row, col) -> drawPeg(center, radius, isSelected = false)
                 }
             }
@@ -88,21 +122,33 @@ private fun DrawScope.drawPegSlot(center: Offset, radius: Float, slotColor: Colo
     drawCircle(slotColor.copy(alpha = SLOT_ALPHA), slotRadius, center)
 }
 
-private fun DrawScope.drawPeg(center: Offset, radius: Float, isSelected: Boolean) {
+private fun DrawScope.drawPeg(
+    center: Offset,
+    radius: Float,
+    isSelected: Boolean,
+    glowRadiusFactor: Float = GLOW_RADIUS_MIN,
+    glowAlpha: Float = GLOW_ALPHA_MAX
+) {
     val pegRadius = radius - PEG_MARGIN
     if (pegRadius <= 0f) return
 
-    if (isSelected) drawSelectionGlow(center, pegRadius)
+    if (isSelected) drawSelectionGlow(center, pegRadius, glowRadiusFactor, glowAlpha)
     drawDropShadow(center, pegRadius)
     drawPegBody(center, pegRadius, isSelected)
     drawShineHighlight(center, pegRadius)
 }
 
-private fun DrawScope.drawSelectionGlow(center: Offset, pegRadius: Float) {
-    val glowRadius = pegRadius * GLOW_RADIUS_FACTOR
+private fun DrawScope.drawSelectionGlow(
+    center: Offset,
+    pegRadius: Float,
+    radiusFactor: Float,
+    alpha: Float
+) {
+    val glowRadius = pegRadius * radiusFactor
+    val glowColor = MarkedPegGlow.copy(alpha = MarkedPegGlow.alpha * alpha)
     drawCircle(
         brush = Brush.radialGradient(
-            colors = listOf(MarkedPegGlow, Color.Transparent),
+            colors = listOf(glowColor, Color.Transparent),
             center = center,
             radius = glowRadius
         ),
