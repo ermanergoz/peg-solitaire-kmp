@@ -11,10 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
-private const val MILLIS_PER_SECOND = 1000L
-private const val SECONDS_PER_MINUTE = 60L
-private const val TIME_FORMAT = "%02d:%02d"
+import com.erman.pegsolitaire.presentation.formatElapsedTime
 
 @Composable
 fun GameTopBar(
@@ -25,10 +22,7 @@ fun GameTopBar(
     onResetClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val totalSeconds = elapsedTimeMillis / MILLIS_PER_SECOND
-    val minutes = totalSeconds / SECONDS_PER_MINUTE
-    val seconds = totalSeconds % SECONDS_PER_MINUTE
-    val timeText = TIME_FORMAT.format(minutes, seconds)
+    val timeText = formatElapsedTime(elapsedTimeMillis)
 
     Row(
         modifier = modifier

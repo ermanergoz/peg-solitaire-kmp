@@ -23,6 +23,10 @@ class HomeViewModelWrapper: ObservableObject {
         }
     }
 
+    func bestScore(for boardType: BoardType) -> GameScore? {
+        uiState.bestScores[boardType] as? GameScore
+    }
+
     func loadData() {
         viewModel.loadData()
     }
