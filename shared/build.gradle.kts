@@ -27,6 +27,8 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.koin.core)
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.coroutines)
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
         }

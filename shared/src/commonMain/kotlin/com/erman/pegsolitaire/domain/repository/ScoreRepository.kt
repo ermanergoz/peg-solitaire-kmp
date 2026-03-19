@@ -6,4 +6,5 @@ import com.erman.pegsolitaire.engine.BoardType
 interface ScoreRepository {
     suspend fun getBestScore(boardType: BoardType): GameScore?
     suspend fun saveScore(boardType: BoardType, remainingPegs: Int, elapsedTimeMillis: Long)
+    suspend fun clearAllScores()
 }

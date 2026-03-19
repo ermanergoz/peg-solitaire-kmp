@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +39,8 @@ private const val CARD_ELEVATION = 4
 fun MenuScreen(
     homeViewModel: HomeViewModel,
     onClassicSelected: (BoardType) -> Unit,
-    onChallengeSelected: () -> Unit
+    onChallengeSelected: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         homeViewModel.loadData()
@@ -53,6 +55,15 @@ fun MenuScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            IconButton(onClick = onSettingsClick) {
+                Text("\u2699", style = MaterialTheme.typography.headlineMedium)
+            }
+        }
+
         Text(
             text = "Peg Solitaire",
             style = MaterialTheme.typography.headlineLarge,

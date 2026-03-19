@@ -16,6 +16,9 @@ struct ContentView: View {
                     },
                     onChallengeSelected: {
                         router.currentScreen = .challengeLevelSelector
+                    },
+                    onSettingsClick: {
+                        router.currentScreen = .settings
                     }
                 )
                 .onAppear { homeViewModel.loadData() }
@@ -40,6 +43,10 @@ struct ContentView: View {
                     levelNumber: levelNumber,
                     onQuit: { router.currentScreen = .menu }
                 )
+            case .settings:
+                SettingsView(
+                    onBack: { router.currentScreen = .menu }
+                )
             }
         }
     }
@@ -54,4 +61,5 @@ enum AppScreen {
     case challengeLevelSelector
     case classicGame(boardType: BoardType)
     case challengeGame(levelNumber: Int32)
+    case settings
 }
