@@ -1,10 +1,11 @@
 import SwiftUI
 import Shared
 
-private let pegMargin: CGFloat = 5
-private let shadowOffsetX: CGFloat = 1
+private let pegMargin: CGFloat = 3
+private let shadowOffsetX: CGFloat = 0
 private let shadowOffsetY: CGFloat = 3
-private let shadowOpacity: Double = 0.2
+private let shadowOpacity: Double = 0.16
+private let shadowRadiusFactor: CGFloat = 1.05
 private let glowRadiusFactor: CGFloat = 1.5
 private let shineRadiusFactor: CGFloat = 0.35
 private let shineOffsetFactor: CGFloat = 0.25
@@ -12,19 +13,15 @@ private let shineVerticalOffsetFactor: CGFloat = 0.3
 private let shineOpacity: Double = 0.7
 private let gradientOffsetFactor: CGFloat = 0.25
 private let bodyGradientRadiusFactor: CGFloat = 1.2
+private let slotAlpha: Double = 0.35
 
 private let pegOuterColor = Color(red: 0.91, green: 0.227, blue: 0.365)
 private let pegInnerColor = Color(red: 1.0, green: 0.482, blue: 0.584)
 private let selectedOuterColor = Color(red: 1.0, green: 0.843, blue: 0.0)
 private let selectedInnerColor = Color(red: 1.0, green: 0.94, blue: 0.39)
 private let selectedGlowColor = Color(red: 1.0, green: 0.843, blue: 0.0, opacity: 0.25)
-private let slotColorLight = Color(red: 0.886, green: 0.839, blue: 0.941)
-private let slotColorDark = Color(red: 0.267, green: 0.208, blue: 0.396)
-private let slotInnerLight = Color(red: 0.831, green: 0.769, blue: 0.91)
-private let slotInnerDark = Color(red: 0.235, green: 0.18, blue: 0.361)
-private let slotBorderOffset: CGFloat = 2
-private let slotInnerShrink: CGFloat = 3
-private let slotInnerOffset: CGFloat = 1
+private let slotColorLight = Color(red: 0.745, green: 0.769, blue: 0.816)
+private let slotColorDark = Color(red: 0.227, green: 0.247, blue: 0.290)
 
 struct BoardView: View {
     let board: Board
@@ -34,10 +31,6 @@ struct BoardView: View {
 
     private var slotColor: Color {
         colorScheme == .dark ? slotColorDark : slotColorLight
-    }
-
-    private var slotInnerColor: Color {
-        colorScheme == .dark ? slotInnerDark : slotInnerLight
     }
 
     var body: some View {
@@ -85,13 +78,8 @@ struct BoardView: View {
     }
 
     private func drawSlot(context: inout GraphicsContext, center: CGPoint, radius: CGFloat) {
-        let outerCenter = CGPoint(x: center.x, y: center.y + slotBorderOffset)
-        let outerPath = circlePath(center: outerCenter, radius: radius)
-        context.fill(outerPath, with: .color(slotColor))
-
-        let innerCenter = CGPoint(x: center.x, y: center.y + slotInnerOffset)
-        let innerPath = circlePath(center: innerCenter, radius: radius - slotInnerShrink)
-        context.fill(innerPath, with: .color(slotInnerColor))
+        let path = circlePath(center: center, radius: radius)
+        context.fill(path, with: .color(slotColor.opacity(slotAlpha)))
     }
 
     private func drawPeg(context: inout GraphicsContext, center: CGPoint, radius: CGFloat, isSelected: Bool) {
@@ -109,7 +97,8 @@ struct BoardView: View {
 
     private func drawDropShadow(context: inout GraphicsContext, center: CGPoint, radius: CGFloat) {
         let shadowCenter = CGPoint(x: center.x + shadowOffsetX, y: center.y + shadowOffsetY)
-        let path = circlePath(center: shadowCenter, radius: radius)
+        let shadowRadius = radius * shadowRadiusFactor
+        let path = circlePath(center: shadowCenter, radius: shadowRadius)
         context.fill(path, with: .color(Color.black.opacity(shadowOpacity)))
     }
 
