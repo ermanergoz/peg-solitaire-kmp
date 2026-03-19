@@ -5,9 +5,18 @@ struct MenuView: View {
     let bestScoreFor: (BoardType) -> GameScore?
     let onClassicSelected: (BoardType) -> Void
     let onChallengeSelected: () -> Void
+    let onSettingsClick: () -> Void
 
     var body: some View {
         VStack(spacing: 24) {
+            HStack {
+                Spacer()
+                Button(action: onSettingsClick) {
+                    Image(systemName: "gearshape")
+                        .font(.title2)
+                }
+            }
+
             Text("Peg Solitaire")
                 .font(.largeTitle)
                 .fontWeight(.bold)
