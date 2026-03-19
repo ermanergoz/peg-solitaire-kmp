@@ -67,7 +67,11 @@ struct GameView: View {
                         } else {
                             viewModel.resumeTimer()
                         }
-                    }
+                    },
+                    moveAnim: viewModel.lastMoveAnim,
+                    onMoveAnimFinished: { viewModel.clearPendingMove() },
+                    isShaking: viewModel.isInvalidMove,
+                    onShakeFinished: { viewModel.clearPendingInvalidMove() }
                 )
             } else {
                 ProgressView()
@@ -150,6 +154,10 @@ private struct GameContentView: View {
     let onUndo: () -> Void
     let onReset: () -> Void
     let onPause: () -> Void
+    var moveAnim: MoveAnimData? = nil
+    var onMoveAnimFinished: (() -> Void)? = nil
+    var isShaking: Bool = false
+    var onShakeFinished: (() -> Void)? = nil
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -167,8 +175,15 @@ private struct GameContentView: View {
             VStack {
                 GameTopBarView(scoreText: scoreText, timeText: timeText)
 
-                BoardView(board: state.board, onCellClicked: onCellClicked)
-                    .padding()
+                BoardView(
+                    board: state.board,
+                    onCellClicked: onCellClicked,
+                    moveAnim: moveAnim,
+                    onMoveAnimFinished: onMoveAnimFinished,
+                    isShaking: isShaking,
+                    onShakeFinished: onShakeFinished
+                )
+                .padding()
 
                 GameBottomBarView(
                     canUndo: state.canUndo,

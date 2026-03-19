@@ -47,12 +47,14 @@ class GameViewModel(
     val events: SharedFlow<GameEvent> = _events.asSharedFlow()
 
     private val moveHistory = mutableListOf<Board>()
+    private var pendingGameState: GameState? = null
     private var timerJob: Job? = null
     private var timerStartMark: TimeSource.Monotonic.ValueTimeMark? = null
     private var timerBaseMillis: Long = 0L
 
     fun startClassicGame(boardType: BoardType) {
         try {
+            pendingGameState = null
             val board = createBoardUseCase(boardType)
             moveHistory.clear()
             stopTimer()
@@ -72,6 +74,7 @@ class GameViewModel(
     }
 
     fun startChallengeLevel(levelNumber: Int) {
+        pendingGameState = null
         _state.value = GameUiState(isLoading = true)
         scope.launch {
             try {
@@ -98,6 +101,7 @@ class GameViewModel(
     }
 
     fun onCellClicked(row: Int, col: Int) {
+        if (_state.value.pendingMove != null) return
         val gameState = _state.value.gameState ?: return
         if (gameState.isGameOver) return
 
@@ -107,6 +111,7 @@ class GameViewModel(
     }
 
     fun onUndoClicked() {
+        if (_state.value.pendingMove != null) return
         if (moveHistory.isEmpty()) return
         val previousBoard = moveHistory.removeLast()
         val gameState = _state.value.gameState ?: return
@@ -131,6 +136,20 @@ class GameViewModel(
         }
     }
 
+    fun clearPendingMove() {
+        val deferred = pendingGameState
+        pendingGameState = null
+        if (deferred != null) {
+            _state.value = _state.value.copy(gameState = deferred, pendingMove = null)
+        } else {
+            _state.value = _state.value.copy(pendingMove = null)
+        }
+    }
+
+    fun clearPendingInvalidMove() {
+        _state.value = _state.value.copy(pendingInvalidMove = false)
+    }
+
     fun pauseTimer() {
         val mark = timerStartMark ?: return
         timerBaseMillis += mark.elapsedNow().inWholeMilliseconds
@@ -153,7 +172,10 @@ class GameViewModel(
             is CellClickEvent.Selected -> applySelectionChange(gameState, result)
             is CellClickEvent.Deselected -> applySelectionChange(gameState, result)
             is CellClickEvent.Moved -> applyMoveResult(gameState, result, event)
-            is CellClickEvent.Invalid -> _events.tryEmit(GameEvent.InvalidMove)
+            is CellClickEvent.Invalid -> {
+                _events.tryEmit(GameEvent.InvalidMove)
+                _state.value = _state.value.copy(pendingInvalidMove = true)
+            }
         }
     }
 
@@ -169,20 +191,24 @@ class GameViewModel(
     private fun applyMoveResult(gameState: GameState, result: CellClickResult, event: CellClickEvent.Moved) {
         result.boardSnapshot?.let { moveHistory.add(it) }
 
-        _events.tryEmit(GameEvent.PegMoved(event.move.from, event.move.to))
+        _events.tryEmit(GameEvent.PegMoved(event.move.from, event.move.to, event.move.captured))
 
-        val updatedState = gameState.copy(
+        pendingGameState = gameState.copy(
             board = result.board,
             selectedCell = null,
             remainingPegs = result.remainingPegs,
             isGameOver = result.isGameOver,
             canUndo = true
         )
-        updateGameState(updatedState)
+
+        _state.value = _state.value.copy(
+            gameState = gameState.copy(selectedCell = null),
+            pendingMove = event.move
+        )
 
         if (result.isGameOver) {
             stopTimer()
-            saveGameResult(updatedState, result.remainingPegs)
+            saveGameResult(pendingGameState!!, result.remainingPegs)
         }
     }
 

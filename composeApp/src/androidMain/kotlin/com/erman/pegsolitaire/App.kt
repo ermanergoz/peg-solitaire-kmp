@@ -1,5 +1,9 @@
 package com.erman.pegsolitaire
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -34,27 +38,33 @@ fun App() {
     PegSolitaireTheme {
         var currentScreen: Screen by remember { mutableStateOf(Screen.Menu) }
 
-        when (val screen = currentScreen) {
-            is Screen.Menu -> MenuScreenRoute(
-                onClassicSelected = { currentScreen = Screen.ClassicGame(it) },
-                onChallengeSelected = { currentScreen = Screen.ChallengeLevelSelector },
-                onSettingsClick = { currentScreen = Screen.Settings }
-            )
-            is Screen.Settings -> SettingsRoute(
-                onBack = { currentScreen = Screen.Menu }
-            )
-            is Screen.ChallengeLevelSelector -> ChallengeLevelSelectorRoute(
-                onLevelSelected = { currentScreen = Screen.ChallengeGame(it) },
-                onBack = { currentScreen = Screen.Menu }
-            )
-            is Screen.ClassicGame -> ClassicGameRoute(
-                boardType = screen.boardType,
-                onQuit = { currentScreen = Screen.Menu }
-            )
-            is Screen.ChallengeGame -> ChallengeGameRoute(
-                levelNumber = screen.levelNumber,
-                onQuit = { currentScreen = Screen.ChallengeLevelSelector }
-            )
+        AnimatedContent(
+            targetState = currentScreen,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            label = "screenTransition"
+        ) { screen ->
+            when (screen) {
+                is Screen.Menu -> MenuScreenRoute(
+                    onClassicSelected = { currentScreen = Screen.ClassicGame(it) },
+                    onChallengeSelected = { currentScreen = Screen.ChallengeLevelSelector },
+                    onSettingsClick = { currentScreen = Screen.Settings }
+                )
+                is Screen.Settings -> SettingsRoute(
+                    onBack = { currentScreen = Screen.Menu }
+                )
+                is Screen.ChallengeLevelSelector -> ChallengeLevelSelectorRoute(
+                    onLevelSelected = { currentScreen = Screen.ChallengeGame(it) },
+                    onBack = { currentScreen = Screen.Menu }
+                )
+                is Screen.ClassicGame -> ClassicGameRoute(
+                    boardType = screen.boardType,
+                    onQuit = { currentScreen = Screen.Menu }
+                )
+                is Screen.ChallengeGame -> ChallengeGameRoute(
+                    levelNumber = screen.levelNumber,
+                    onQuit = { currentScreen = Screen.ChallengeLevelSelector }
+                )
+            }
         }
     }
 }

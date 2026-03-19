@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
 import com.erman.pegsolitaire.domain.model.GameState
-import com.erman.pegsolitaire.engine.BoardType
 import com.erman.pegsolitaire.presentation.GameEvent
 import com.erman.pegsolitaire.presentation.GameViewModel
 import com.erman.pegsolitaire.presentation.SCORE_SEPARATOR
@@ -41,6 +40,7 @@ import com.erman.pegsolitaire.ui.component.BoardCanvas
 import com.erman.pegsolitaire.ui.component.GameBottomBar
 import com.erman.pegsolitaire.ui.component.GameOverDialog
 import com.erman.pegsolitaire.ui.component.GameTopBar
+import com.erman.pegsolitaire.ui.component.MoveAnimationData
 import com.erman.pegsolitaire.ui.theme.boardBackgroundColor
 
 @Composable
@@ -53,10 +53,19 @@ fun GameScreen(
     val uiState by gameViewModel.state.collectAsState()
     var gameOverEvent by remember { mutableStateOf<GameEvent.GameOver?>(null) }
 
-    CollectGameEvents(gameViewModel) { event -> gameOverEvent = event }
+    LaunchedEffect(Unit) {
+        gameViewModel.events.collect { event ->
+            if (event is GameEvent.GameOver) gameOverEvent = event
+        }
+    }
 
     DisposableEffect(gameViewModel) {
         onDispose { gameViewModel.onCleared() }
+    }
+
+    val pendingMove = uiState.pendingMove
+    val moveAnimation = pendingMove?.let {
+        MoveAnimationData(from = it.from, to = it.to, captured = it.captured)
     }
 
     Box(
@@ -75,6 +84,10 @@ fun GameScreen(
             else -> GameContent(
                 gameState = gameState,
                 gameOverEvent = gameOverEvent,
+                moveAnimation = moveAnimation,
+                onMoveAnimationFinished = gameViewModel::clearPendingMove,
+                isShaking = uiState.pendingInvalidMove,
+                onShakeFinished = gameViewModel::clearPendingInvalidMove,
                 onCellClicked = gameViewModel::onCellClicked,
                 onUndoClicked = gameViewModel::onUndoClicked,
                 onResetClicked = gameViewModel::resetGame,
@@ -93,22 +106,6 @@ fun GameScreen(
                     gameViewModel.startChallengeLevel(levelNumber)
                 }
             )
-        }
-    }
-}
-
-@Composable
-private fun CollectGameEvents(
-    gameViewModel: GameViewModel,
-    onGameOver: (GameEvent.GameOver) -> Unit
-) {
-    LaunchedEffect(Unit) {
-        gameViewModel.events.collect { event ->
-            when (event) {
-                is GameEvent.GameOver -> onGameOver(event)
-                is GameEvent.InvalidMove -> {}
-                is GameEvent.PegMoved -> {}
-            }
         }
     }
 }
@@ -138,6 +135,10 @@ private fun ErrorContent(message: String, onRetry: () -> Unit, onQuit: () -> Uni
 private fun GameContent(
     gameState: GameState,
     gameOverEvent: GameEvent.GameOver?,
+    moveAnimation: MoveAnimationData?,
+    onMoveAnimationFinished: () -> Unit,
+    isShaking: Boolean,
+    onShakeFinished: () -> Unit,
     onCellClicked: (Int, Int) -> Unit,
     onUndoClicked: () -> Unit,
     onResetClicked: () -> Unit,
@@ -167,6 +168,10 @@ private fun GameContent(
             BoardCanvas(
                 board = gameState.board,
                 onCellClicked = onCellClicked,
+                moveAnimation = moveAnimation,
+                onMoveAnimationFinished = onMoveAnimationFinished,
+                isShaking = isShaking,
+                onShakeFinished = onShakeFinished,
                 modifier = Modifier
                     .weight(1f)
                     .padding(16.dp)
