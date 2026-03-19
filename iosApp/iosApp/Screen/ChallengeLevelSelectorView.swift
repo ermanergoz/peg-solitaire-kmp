@@ -22,7 +22,7 @@ struct ChallengeLevelSelectorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            LevelSelectorTopBar(onBack: onBack)
+            LevelSelectorTopBar()
 
             if let error = viewModel.uiState.error, viewModel.uiState.levels.isEmpty {
                 Spacer()
@@ -47,21 +47,13 @@ struct ChallengeLevelSelectorView: View {
 }
 
 private struct LevelSelectorTopBar: View {
-    let onBack: () -> Void
-
     var body: some View {
-        HStack {
-            Button(action: onBack) {
-                Image(systemName: "chevron.left")
-                    .font(.title3)
-            }
-            Text("Challenge Levels")
-                .font(.title2)
-                .fontWeight(.bold)
-            Spacer()
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 12)
+        Text("Challenge Levels")
+            .font(.title2)
+            .fontWeight(.bold)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal)
+            .padding(.vertical, 12)
     }
 }
 

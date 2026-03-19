@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,11 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
 import com.erman.pegsolitaire.R
 import com.erman.pegsolitaire.domain.model.LevelItem
 import com.erman.pegsolitaire.presentation.ChallengeLevelSelectorViewModel
@@ -76,7 +75,7 @@ fun ChallengeLevelSelectorScreen(
     }
 
     Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
-        LevelSelectorTopBar(onBack = onBack)
+        LevelSelectorTopBar()
 
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -102,20 +101,13 @@ fun ChallengeLevelSelectorScreen(
 }
 
 @Composable
-private fun LevelSelectorTopBar(onBack: () -> Unit) {
+private fun LevelSelectorTopBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onBack) {
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_back),
-                contentDescription = "Back",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
         Text(
             text = "Challenge Levels",
             style = MaterialTheme.typography.titleLarge,
