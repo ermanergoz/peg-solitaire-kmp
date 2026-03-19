@@ -1,5 +1,6 @@
 package com.erman.pegsolitaire.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,6 +48,8 @@ fun GameScreen(
     gameViewModel: GameViewModel,
     onQuit: () -> Unit
 ) {
+    BackHandler { onQuit() }
+
     val uiState by gameViewModel.state.collectAsState()
     var gameOverEvent by remember { mutableStateOf<GameEvent.GameOver?>(null) }
 
