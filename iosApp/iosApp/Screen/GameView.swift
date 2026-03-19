@@ -111,6 +111,8 @@ private struct GameContentView: View {
     let onUndo: () -> Void
     let onReset: () -> Void
 
+    @Environment(\.colorScheme) private var colorScheme
+
     private var scoreText: String {
         "\(state.remainingPegs)\(scoreSeparator)\(state.totalPegs)"
     }
@@ -121,16 +123,20 @@ private struct GameContentView: View {
     }
 
     var body: some View {
-        GameTopBarView(
-            scoreText: scoreText,
-            timeText: timeText,
-            canUndo: state.canUndo,
-            onUndo: onUndo,
-            onReset: onReset
-        )
+        VStack {
+            GameTopBarView(
+                scoreText: scoreText,
+                timeText: timeText,
+                canUndo: state.canUndo,
+                onUndo: onUndo,
+                onReset: onReset
+            )
 
-        BoardView(board: state.board, onCellClicked: onCellClicked)
-            .padding()
+            BoardView(board: state.board, onCellClicked: onCellClicked)
+                .padding()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(boardBackgroundColor(boardType: state.boardType, colorScheme: colorScheme))
     }
 }
 

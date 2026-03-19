@@ -20,24 +20,21 @@ import com.erman.pegsolitaire.ui.theme.PegColor
 import com.erman.pegsolitaire.ui.theme.PegColorCenter
 import com.erman.pegsolitaire.ui.theme.PegSlotColorDark
 import com.erman.pegsolitaire.ui.theme.PegSlotColorLight
-import com.erman.pegsolitaire.ui.theme.PegSlotInnerDark
-import com.erman.pegsolitaire.ui.theme.PegSlotInnerLight
 
-private const val PEG_MARGIN = 5f
-private const val SHADOW_OFFSET_X = 1f
+private const val PEG_MARGIN = 3f
+private const val SHADOW_OFFSET_X = 0f
 private const val SHADOW_OFFSET_Y = 3f
-private const val SHADOW_ALPHA_FACTOR = 50
-private const val SHINE_ALPHA = 180
+private const val SHADOW_ALPHA = 40
+private const val SHADOW_RADIUS_FACTOR = 1.05f
+private const val SHINE_ALPHA = 160
 private const val GLOW_RADIUS_FACTOR = 1.5f
 private const val SHINE_RADIUS_FACTOR = 0.35f
 private const val SHINE_OFFSET_FACTOR = 0.25f
 private const val GRADIENT_OFFSET_FACTOR = 0.25f
-private const val SLOT_INNER_OFFSET = 1f
-private const val SLOT_INNER_SHRINK = 3f
-private const val SLOT_BORDER_OFFSET = 2f
+private const val SLOT_ALPHA = 0.35f
 private const val BODY_GRADIENT_RADIUS_FACTOR = 1.2f
 private const val SHINE_VERTICAL_OFFSET_FACTOR = 0.3f
-private val ShadowColor = Color(0, 0, 0, SHADOW_ALPHA_FACTOR)
+private val ShadowColor = Color(0, 0, 0, SHADOW_ALPHA)
 private val ShineColor = Color(255, 255, 255, SHINE_ALPHA)
 
 @Composable
@@ -48,7 +45,6 @@ fun BoardCanvas(
 ) {
     val isDark = isSystemInDarkTheme()
     val slotColor = if (isDark) PegSlotColorDark else PegSlotColorLight
-    val slotInnerColor = if (isDark) PegSlotInnerDark else PegSlotInnerLight
     val aspectRatio = board.cols.toFloat() / board.rows.toFloat()
 
     Canvas(
@@ -78,7 +74,7 @@ fun BoardCanvas(
                 val center = Offset(cx, cy)
 
                 when {
-                    board.isEmpty(row, col) -> drawPegSlot(center, radius, slotColor, slotInnerColor)
+                    board.isEmpty(row, col) -> drawPegSlot(center, radius, slotColor)
                     board.isSelected(row, col) -> drawPeg(center, radius, isSelected = true)
                     board.isPeg(row, col) -> drawPeg(center, radius, isSelected = false)
                 }
@@ -87,19 +83,9 @@ fun BoardCanvas(
     }
 }
 
-private fun DrawScope.drawPegSlot(
-    center: Offset,
-    radius: Float,
-    slotColor: Color,
-    slotInnerColor: Color
-) {
-    val slotRadius = radius - PEG_MARGIN - SLOT_BORDER_OFFSET
-    drawCircle(slotColor, slotRadius, center)
-    drawCircle(
-        slotInnerColor,
-        slotRadius - SLOT_INNER_SHRINK,
-        Offset(center.x, center.y + SLOT_INNER_OFFSET)
-    )
+private fun DrawScope.drawPegSlot(center: Offset, radius: Float, slotColor: Color) {
+    val slotRadius = radius - PEG_MARGIN
+    drawCircle(slotColor.copy(alpha = SLOT_ALPHA), slotRadius, center)
 }
 
 private fun DrawScope.drawPeg(center: Offset, radius: Float, isSelected: Boolean) {
@@ -127,13 +113,14 @@ private fun DrawScope.drawSelectionGlow(center: Offset, pegRadius: Float) {
 
 private fun DrawScope.drawDropShadow(center: Offset, pegRadius: Float) {
     val shadowCenter = Offset(center.x + SHADOW_OFFSET_X, center.y + SHADOW_OFFSET_Y)
+    val shadowRadius = pegRadius * SHADOW_RADIUS_FACTOR
     drawCircle(
         brush = Brush.radialGradient(
             colors = listOf(ShadowColor, Color.Transparent),
             center = shadowCenter,
-            radius = pegRadius
+            radius = shadowRadius
         ),
-        radius = pegRadius,
+        radius = shadowRadius,
         center = shadowCenter
     )
 }

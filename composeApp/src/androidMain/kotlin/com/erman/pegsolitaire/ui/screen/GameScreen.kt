@@ -1,5 +1,7 @@
 package com.erman.pegsolitaire.ui.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.erman.pegsolitaire.domain.model.GameState
+import com.erman.pegsolitaire.engine.BoardType
 import com.erman.pegsolitaire.presentation.GameEvent
 import com.erman.pegsolitaire.presentation.GameViewModel
 import com.erman.pegsolitaire.presentation.SCORE_SEPARATOR
 import com.erman.pegsolitaire.ui.component.BoardCanvas
 import com.erman.pegsolitaire.ui.component.GameOverDialog
 import com.erman.pegsolitaire.ui.component.GameTopBar
+import com.erman.pegsolitaire.ui.theme.boardBackgroundColor
 
 @Composable
 fun GameScreen(
@@ -130,9 +134,13 @@ private fun GameContent(
     onNextLevel: (Int) -> Unit
 ) {
     val scoreText = "${gameState.remainingPegs}$SCORE_SEPARATOR${gameState.totalPegs}"
+    val isDark = isSystemInDarkTheme()
+    val backgroundColor = boardBackgroundColor(gameState.boardType, isDark)
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         GameTopBar(
