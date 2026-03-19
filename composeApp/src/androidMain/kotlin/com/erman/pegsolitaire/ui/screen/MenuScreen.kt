@@ -3,6 +3,7 @@ package com.erman.pegsolitaire.ui.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,13 +18,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.erman.pegsolitaire.domain.model.GameScore
 import com.erman.pegsolitaire.engine.BoardType
 import com.erman.pegsolitaire.presentation.HomeViewModel
+import com.erman.pegsolitaire.presentation.formatElapsedTime
 
 private const val CARD_CORNER_RADIUS = 16
 private const val BUTTON_CORNER_RADIUS = 12
@@ -38,6 +43,8 @@ fun MenuScreen(
     LaunchedEffect(Unit) {
         homeViewModel.loadData()
     }
+
+    val uiState by homeViewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -57,6 +64,7 @@ fun MenuScreen(
 
         MenuCard(title = "Classic Mode") {
             ClassicModeButtons(
+                bestScores = uiState.bestScores,
                 onBoardSelected = onClassicSelected,
                 buttonColor = MaterialTheme.colorScheme.primary
             )
@@ -97,15 +105,29 @@ private fun MenuCard(title: String, content: @Composable ColumnScope.() -> Unit)
 }
 
 @Composable
-private fun ClassicModeButtons(onBoardSelected: (BoardType) -> Unit, buttonColor: Color) {
+private fun ClassicModeButtons(
+    bestScores: Map<BoardType, GameScore>,
+    onBoardSelected: (BoardType) -> Unit,
+    buttonColor: Color
+) {
     BoardType.entries.forEach { boardType ->
         val label = boardType.name.lowercase().replaceFirstChar { it.uppercase() }
-        MenuButton(text = label, color = buttonColor) { onBoardSelected(boardType) }
+        val score = bestScores[boardType]
+        MenuButton(
+            text = label,
+            scoreText = score?.let { "${it.remainingPegs} left \u00B7 ${formatElapsedTime(it.elapsedTimeMillis)}" },
+            color = buttonColor
+        ) { onBoardSelected(boardType) }
     }
 }
 
 @Composable
-private fun MenuButton(text: String, color: Color, onClick: () -> Unit) {
+private fun MenuButton(
+    text: String,
+    color: Color,
+    scoreText: String? = null,
+    onClick: () -> Unit
+) {
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -114,6 +136,18 @@ private fun MenuButton(text: String, color: Color, onClick: () -> Unit) {
         shape = RoundedCornerShape(BUTTON_CORNER_RADIUS.dp),
         colors = ButtonDefaults.buttonColors(containerColor = color)
     ) {
-        Text(text)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text)
+            if (scoreText != null) {
+                Text(
+                    text = scoreText,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
     }
 }

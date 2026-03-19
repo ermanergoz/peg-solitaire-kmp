@@ -3,12 +3,14 @@ import Shared
 
 struct ContentView: View {
     @StateObject private var router = Router()
+    @StateObject private var homeViewModel = HomeViewModelWrapper()
 
     var body: some View {
         NavigationStack {
             switch router.currentScreen {
             case .menu:
                 MenuView(
+                    bestScoreFor: { homeViewModel.bestScore(for: $0) },
                     onClassicSelected: { boardType in
                         router.currentScreen = .classicGame(boardType: boardType)
                     },
@@ -16,6 +18,7 @@ struct ContentView: View {
                         router.currentScreen = .challengeLevelSelector
                     }
                 )
+                .onAppear { homeViewModel.loadData() }
             case .challengeLevelSelector:
                 ChallengeLevelSelectorView(
                     onLevelSelected: { level in
