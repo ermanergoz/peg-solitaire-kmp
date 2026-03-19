@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -42,6 +43,7 @@ fun GameBottomBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .navigationBarsPadding()
             .padding(horizontal = BAR_HORIZONTAL_PADDING, vertical = BAR_VERTICAL_PADDING),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
