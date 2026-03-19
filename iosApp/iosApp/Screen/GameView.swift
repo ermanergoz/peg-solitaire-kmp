@@ -9,15 +9,17 @@ private let badgeBlue = Color(red: 0.376, green: 0.647, blue: 0.980)
 private let badgeRed = Color(red: 0.937, green: 0.267, blue: 0.267)
 private let badgeGray = Color(red: 0.612, green: 0.639, blue: 0.686)
 
-private let iconSize: CGFloat = 40
 private let bottomButtonSize: CGFloat = 48
-private let pillCornerRadius: CGFloat = 20
 private let pillHPadding: CGFloat = 14
 private let pillVPadding: CGFloat = 8
 private let barHPadding: CGFloat = 16
 private let barVPadding: CGFloat = 12
 private let badgeFontSize: CGFloat = 15
 private let disabledAlpha: Double = 0.4
+private let swipeBackThreshold: CGFloat = 100
+
+private let pauseSymbol = "\u{2016}"
+private let playSymbol = "\u{25B6}"
 
 struct GameView: View {
     let boardType: BoardType?
@@ -26,6 +28,7 @@ struct GameView: View {
 
     @StateObject private var viewModel = GameViewModelWrapper()
     @State private var gameOverInfo: GameOverInfo? = nil
+    @State private var isPaused = false
     @Environment(\.scenePhase) private var scenePhase
 
     private var nextLevelNumber: Int32? {
@@ -53,15 +56,31 @@ struct GameView: View {
             } else if let state = viewModel.gameState {
                 GameContentView(
                     state: state,
+                    isPaused: isPaused,
                     onCellClicked: viewModel.onCellClicked,
                     onUndo: viewModel.undo,
                     onReset: viewModel.reset,
-                    onBack: onQuit
+                    onPause: {
+                        isPaused.toggle()
+                        if isPaused {
+                            viewModel.pauseTimer()
+                        } else {
+                            viewModel.resumeTimer()
+                        }
+                    }
                 )
             } else {
                 ProgressView()
             }
         }
+        .gesture(
+            DragGesture(minimumDistance: swipeBackThreshold)
+                .onEnded { value in
+                    if value.translation.width > swipeBackThreshold {
+                        onQuit()
+                    }
+                }
+        )
         .onAppear(perform: startGame)
         .onDisappear { viewModel.pauseTimer() }
         .onChange(of: viewModel.lastGameOverScore) { _, newValue in
@@ -69,7 +88,7 @@ struct GameView: View {
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
-                viewModel.resumeTimer()
+                if !isPaused { viewModel.resumeTimer() }
             } else {
                 viewModel.pauseTimer()
             }
@@ -82,11 +101,13 @@ struct GameView: View {
                 },
                 onRestart: {
                     gameOverInfo = nil
+                    isPaused = false
                     viewModel.reset()
                 },
                 onNextLevel: nextLevelNumber.map { nextLevel in
                     {
                         gameOverInfo = nil
+                        isPaused = false
                         viewModel.startChallengeLevel(levelNumber: nextLevel)
                     }
                 }
@@ -124,10 +145,11 @@ private struct ErrorContentView: View {
 
 private struct GameContentView: View {
     let state: GameState
+    let isPaused: Bool
     let onCellClicked: (Int32, Int32) -> Void
     let onUndo: () -> Void
     let onReset: () -> Void
-    let onBack: () -> Void
+    let onPause: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -142,18 +164,16 @@ private struct GameContentView: View {
 
     var body: some View {
         VStack {
-            GameTopBarView(
-                scoreText: scoreText,
-                timeText: timeText,
-                onBack: onBack
-            )
+            GameTopBarView(scoreText: scoreText, timeText: timeText)
 
             BoardView(board: state.board, onCellClicked: onCellClicked)
                 .padding()
 
             GameBottomBarView(
                 canUndo: state.canUndo,
+                isPaused: isPaused,
                 onUndo: onUndo,
+                onPause: onPause,
                 onReset: onReset
             )
         }
@@ -165,14 +185,11 @@ private struct GameContentView: View {
 private struct GameTopBarView: View {
     let scoreText: String
     let timeText: String
-    let onBack: () -> Void
 
     var body: some View {
         HStack(spacing: 10) {
-            CircleIconButton(symbol: "\u{2190}", color: badgePurple, action: onBack)
             PillBadge(text: scoreText, color: badgeGreen)
             PillBadge(text: timeText, color: badgeBlue)
-            Spacer()
         }
         .padding(.horizontal, barHPadding)
         .padding(.vertical, barVPadding)
@@ -181,7 +198,9 @@ private struct GameTopBarView: View {
 
 private struct GameBottomBarView: View {
     let canUndo: Bool
+    let isPaused: Bool
     let onUndo: () -> Void
+    let onPause: () -> Void
     let onReset: () -> Void
 
     var body: some View {
@@ -193,27 +212,16 @@ private struct GameBottomBarView: View {
             )
             .disabled(!canUndo)
 
+            BottomCircleButton(
+                symbol: isPaused ? playSymbol : pauseSymbol,
+                color: badgePurple,
+                action: onPause
+            )
+
             BottomCircleButton(symbol: "\u{21BB}", color: badgeRed, action: onReset)
         }
         .padding(.horizontal, barHPadding)
         .padding(.vertical, barVPadding)
-    }
-}
-
-private struct CircleIconButton: View {
-    let symbol: String
-    let color: Color
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(symbol)
-                .font(.system(size: badgeFontSize, weight: .bold))
-                .foregroundColor(.white)
-                .frame(width: iconSize, height: iconSize)
-                .background(color)
-                .clipShape(Circle())
-        }
     }
 }
 
