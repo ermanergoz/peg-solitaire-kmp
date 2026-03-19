@@ -9,7 +9,8 @@ class HomeViewModelWrapper: ObservableObject {
         bestScores: [:],
         hasOngoingChallenge: false,
         currentChallengeLevel: 1,
-        isLoading: true
+        isLoading: true,
+        error: nil
     )
 
     init() {
@@ -17,7 +18,7 @@ class HomeViewModelWrapper: ObservableObject {
         stateCollector = FlowCollector(flow: viewModel.uiState)
 
         stateCollector.collect { [weak self] state in
-            guard let self = self else { return }
+            guard let self = self, let state = state else { return }
             self.uiState = state
         }
     }

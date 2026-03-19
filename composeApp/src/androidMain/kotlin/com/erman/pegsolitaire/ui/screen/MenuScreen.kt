@@ -17,8 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,10 +33,8 @@ private const val CARD_ELEVATION = 4
 fun MenuScreen(
     homeViewModel: HomeViewModel,
     onClassicSelected: (BoardType) -> Unit,
-    onChallengeSelected: (Int) -> Unit
+    onChallengeSelected: () -> Unit
 ) {
-    val uiState by homeViewModel.uiState.collectAsState()
-
     LaunchedEffect(Unit) {
         homeViewModel.loadData()
     }
@@ -69,12 +65,10 @@ fun MenuScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         MenuCard(title = "Challenge Mode") {
-            ChallengeModeButton(
-                hasOngoingChallenge = uiState.hasOngoingChallenge,
-                currentLevel = uiState.currentChallengeLevel,
-                onChallengeSelected = onChallengeSelected,
-                buttonColor = MaterialTheme.colorScheme.secondary
-            )
+            MenuButton(
+                text = "Browse Levels",
+                color = MaterialTheme.colorScheme.secondary
+            ) { onChallengeSelected() }
         }
     }
 }
@@ -108,21 +102,6 @@ private fun ClassicModeButtons(onBoardSelected: (BoardType) -> Unit, buttonColor
         val label = boardType.name.lowercase().replaceFirstChar { it.uppercase() }
         MenuButton(text = label, color = buttonColor) { onBoardSelected(boardType) }
     }
-}
-
-@Composable
-private fun ChallengeModeButton(
-    hasOngoingChallenge: Boolean,
-    currentLevel: Int,
-    onChallengeSelected: (Int) -> Unit,
-    buttonColor: Color
-) {
-    val buttonText = if (hasOngoingChallenge) {
-        "Continue (Level $currentLevel)"
-    } else {
-        "Start Challenge"
-    }
-    MenuButton(text = buttonText, color = buttonColor) { onChallengeSelected(currentLevel) }
 }
 
 @Composable
