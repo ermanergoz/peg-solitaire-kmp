@@ -1,5 +1,7 @@
 package com.erman.pegsolitaire.ui.component
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -10,15 +12,21 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.IntOffset
 import com.erman.pegsolitaire.engine.Board
+import com.erman.pegsolitaire.engine.Position
 import com.erman.pegsolitaire.ui.theme.MarkedPegCenter
 import com.erman.pegsolitaire.ui.theme.MarkedPegColor
 import com.erman.pegsolitaire.ui.theme.MarkedPegGlow
@@ -26,6 +34,8 @@ import com.erman.pegsolitaire.ui.theme.PegColor
 import com.erman.pegsolitaire.ui.theme.PegColorCenter
 import com.erman.pegsolitaire.ui.theme.PegSlotColorDark
 import com.erman.pegsolitaire.ui.theme.PegSlotColorLight
+import kotlin.math.roundToInt
+import kotlin.math.sin
 
 private const val PEG_MARGIN = 3f
 private const val SHADOW_OFFSET_X = 0f
@@ -44,13 +54,28 @@ private const val GRADIENT_OFFSET_FACTOR = 0.25f
 private const val SLOT_ALPHA = 0.35f
 private const val BODY_GRADIENT_RADIUS_FACTOR = 1.2f
 private const val SHINE_VERTICAL_OFFSET_FACTOR = 0.3f
+private const val MOVE_ANIMATION_DURATION_MS = 250
+private const val SHAKE_DURATION_MS = 400
+private const val SHAKE_AMPLITUDE = 12f
+private const val SHAKE_FREQUENCY = 3
+private const val VORTEX_MAX_ROTATION = 540f
 private val ShadowColor = Color(0, 0, 0, SHADOW_ALPHA)
 private val ShineColor = Color(255, 255, 255, SHINE_ALPHA)
+
+data class MoveAnimationData(
+    val from: Position,
+    val to: Position,
+    val captured: Position
+)
 
 @Composable
 fun BoardCanvas(
     board: Board,
     onCellClicked: (row: Int, col: Int) -> Unit,
+    moveAnimation: MoveAnimationData?,
+    onMoveAnimationFinished: () -> Unit,
+    isShaking: Boolean,
+    onShakeFinished: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -77,10 +102,43 @@ fun BoardCanvas(
         label = "glowAlpha"
     )
 
+    val moveAnimatable = remember(moveAnimation) {
+        Animatable(if (moveAnimation != null) 0f else 1f)
+    }
+
+    LaunchedEffect(moveAnimation) {
+        if (moveAnimation != null) {
+            moveAnimatable.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(MOVE_ANIMATION_DURATION_MS, easing = LinearEasing)
+            )
+            onMoveAnimationFinished()
+        }
+    }
+
+    val shakeAnimatable = remember(isShaking) {
+        Animatable(0f)
+    }
+    LaunchedEffect(isShaking) {
+        if (isShaking) {
+            shakeAnimatable.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(SHAKE_DURATION_MS, easing = LinearEasing)
+            )
+            onShakeFinished()
+        }
+    }
+
+    val shakeX = if (isShaking) {
+        val t = shakeAnimatable.value
+        (sin(t * SHAKE_FREQUENCY * 2 * Math.PI) * SHAKE_AMPLITUDE * (1f - t)).toFloat()
+    } else 0f
+
     Canvas(
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(aspectRatio)
+            .offset { IntOffset(shakeX.roundToInt(), 0) }
             .pointerInput(board.rows, board.cols) {
                 detectTapGestures { offset ->
                     val cellWidth = size.width.toFloat() / board.cols
@@ -96,6 +154,8 @@ fun BoardCanvas(
         val cellWidth = size.width / board.cols
         val cellHeight = size.height / board.rows
         val radius = minOf(cellWidth, cellHeight) / 2f
+        val anim = moveAnimation
+        val progress = moveAnimatable.value
 
         for (row in 0 until board.rows) {
             for (col in 0 until board.cols) {
@@ -103,7 +163,12 @@ fun BoardCanvas(
                 val cy = row * cellHeight + cellHeight / 2f
                 val center = Offset(cx, cy)
 
+                val isAnimSource = anim != null && anim.from.row == row && anim.from.col == col
+                val isAnimCaptured = anim != null && anim.captured.row == row && anim.captured.col == col
+
                 when {
+                    isAnimSource -> drawPegSlot(center, radius, slotColor)
+                    isAnimCaptured -> drawPegSlot(center, radius, slotColor)
                     board.isEmpty(row, col) -> drawPegSlot(center, radius, slotColor)
                     board.isSelected(row, col) -> drawPeg(
                         center, radius, isSelected = true,
@@ -112,6 +177,27 @@ fun BoardCanvas(
                     )
                     board.isPeg(row, col) -> drawPeg(center, radius, isSelected = false)
                 }
+            }
+        }
+
+        if (anim != null) {
+            val fromCx = anim.from.col * cellWidth + cellWidth / 2f
+            val fromCy = anim.from.row * cellHeight + cellHeight / 2f
+            val toCx = anim.to.col * cellWidth + cellWidth / 2f
+            val toCy = anim.to.row * cellHeight + cellHeight / 2f
+            val slidingCenter = Offset(
+                fromCx + (toCx - fromCx) * progress,
+                fromCy + (toCy - fromCy) * progress
+            )
+            drawPeg(slidingCenter, radius, isSelected = false)
+
+            val capturedCx = anim.captured.col * cellWidth + cellWidth / 2f
+            val capturedCy = anim.captured.row * cellHeight + cellHeight / 2f
+            val capturedCenter = Offset(capturedCx, capturedCy)
+            val capturedScale = 1f - progress
+            val capturedRotation = progress * VORTEX_MAX_ROTATION
+            if (capturedScale > 0.01f) {
+                drawVortexPeg(capturedCenter, radius, capturedScale, capturedRotation)
             }
         }
     }
@@ -136,6 +222,19 @@ private fun DrawScope.drawPeg(
     drawDropShadow(center, pegRadius)
     drawPegBody(center, pegRadius, isSelected)
     drawShineHighlight(center, pegRadius)
+}
+
+private fun DrawScope.drawVortexPeg(center: Offset, radius: Float, scale: Float, rotation: Float) {
+    val pegRadius = (radius - PEG_MARGIN) * scale
+    if (pegRadius <= 0f) return
+
+    withTransform({
+        rotate(rotation, center)
+    }) {
+        drawDropShadow(center, pegRadius)
+        drawPegBody(center, pegRadius, isSelected = false)
+        drawShineHighlight(center, pegRadius)
+    }
 }
 
 private fun DrawScope.drawSelectionGlow(

@@ -10,6 +10,8 @@ class GameViewModelWrapper: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var error: String? = nil
     @Published var lastGameOverScore: GameOverInfo? = nil
+    @Published var lastMoveAnim: MoveAnimData? = nil
+    @Published var isInvalidMove: Bool = false
 
     init() {
         viewModel = KoinHelper().getGameViewModel()
@@ -21,6 +23,26 @@ class GameViewModelWrapper: ObservableObject {
             self.gameState = uiState.gameState
             self.isLoading = uiState.isLoading
             self.error = uiState.error
+
+            if let move = uiState.pendingMove {
+                let newAnim = MoveAnimData(
+                    fromRow: move.from.row,
+                    fromCol: move.from.col,
+                    toRow: move.to.row,
+                    toCol: move.to.col,
+                    capturedRow: move.captured.row,
+                    capturedCol: move.captured.col
+                )
+                if self.lastMoveAnim != newAnim {
+                    self.lastMoveAnim = newAnim
+                }
+            } else if self.lastMoveAnim != nil {
+                self.lastMoveAnim = nil
+            }
+
+            if uiState.pendingInvalidMove != self.isInvalidMove {
+                self.isInvalidMove = uiState.pendingInvalidMove
+            }
         }
 
         eventCollector.collect { [weak self] event in
@@ -51,8 +73,20 @@ class GameViewModelWrapper: ObservableObject {
     }
 
     func reset() {
+        lastMoveAnim = nil
+        isInvalidMove = false
         viewModel.resetGame()
         lastGameOverScore = nil
+    }
+
+    func clearPendingMove() {
+        lastMoveAnim = nil
+        viewModel.clearPendingMove()
+    }
+
+    func clearPendingInvalidMove() {
+        isInvalidMove = false
+        viewModel.clearPendingInvalidMove()
     }
 
     func pauseTimer() {
