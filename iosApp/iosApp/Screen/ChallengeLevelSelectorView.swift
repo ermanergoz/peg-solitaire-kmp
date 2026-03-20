@@ -1,19 +1,24 @@
 import SwiftUI
 import Shared
 
-private let gridColumns = 4
+private let gridColumns = 3
 private let gridSpacing: CGFloat = 12
-private let cellCornerRadius: CGFloat = 12
+private let cellCornerRadius: CGFloat = 16
 private let loadMoreThreshold = 10
 private let maxStars = 3
-private let lockedOpacity = 0.4
-private let starSize: CGFloat = 14
+private let lockedOpacity = 0.35
+private let levelNumberSize: CGFloat = 20
+private let starRowWidth: CGFloat = 36
+private let starRowHeight: CGFloat = 14
+private let lockIconSize: CGFloat = 20
+private let swipeBackThreshold: CGFloat = 100
 
 struct ChallengeLevelSelectorView: View {
     let onLevelSelected: (Int32) -> Void
     let onBack: () -> Void
 
     @StateObject private var viewModel = ChallengeLevelSelectorViewModelWrapper()
+    @Environment(\.colorScheme) private var colorScheme
 
     private let columns = Array(
         repeating: GridItem(.flexible(), spacing: gridSpacing),
@@ -37,11 +42,21 @@ struct ChallengeLevelSelectorView: View {
                     levels: viewModel.uiState.levels,
                     isLoadingMore: viewModel.uiState.isLoadingMore,
                     columns: columns,
+                    colorScheme: colorScheme,
                     onLevelSelected: onLevelSelected,
                     onLoadMore: viewModel.loadMoreLevels
                 )
             }
         }
+        .background(colorScheme == .light ? warmBackground : Color(.systemBackground))
+        .gesture(
+            DragGesture(minimumDistance: swipeBackThreshold)
+                .onEnded { value in
+                    if value.translation.width > swipeBackThreshold {
+                        onBack()
+                    }
+                }
+        )
         .onAppear { viewModel.loadInitialLevels() }
     }
 }
@@ -61,6 +76,7 @@ private struct LevelGrid: View {
     let levels: [LevelItem]
     let isLoadingMore: Bool
     let columns: [GridItem]
+    let colorScheme: ColorScheme
     let onLevelSelected: (Int32) -> Void
     let onLoadMore: () -> Void
 
@@ -68,11 +84,11 @@ private struct LevelGrid: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: gridSpacing) {
                 ForEach(levels, id: \.levelNumber) { level in
-                    LevelCell(level: level) {
+                    LevelCell(level: level, colorScheme: colorScheme) {
                         onLevelSelected(level.levelNumber)
                     }
                     .onAppear {
-                        if level.levelNumber >= levels.last!.levelNumber - Int32(loadMoreThreshold) {
+                        if level.levelNumber >= (levels.last?.levelNumber ?? 0) - Int32(loadMoreThreshold) {
                             onLoadMore()
                         }
                     }
@@ -93,39 +109,53 @@ private struct LevelGrid: View {
 
 private struct LevelCell: View {
     let level: LevelItem
+    let colorScheme: ColorScheme
     let onTap: () -> Void
 
-    private var backgroundColor: Color {
-        if level.isLocked {
-            return Color(.systemBackground)
-        }
-        if level.stars > 0 {
-            return .purple.opacity(0.15)
-        }
-        return Color(.systemBackground)
-    }
+    private var isCompleted: Bool { level.stars > 0 }
+    private var cellColor: Color { Color(.secondarySystemBackground) }
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 4) {
-                if level.isLocked {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 16))
-                }
+            GeometryReader { geo in
+                let size = geo.size
+                ZStack {
+                    RoundedRectangle(cornerRadius: cellCornerRadius)
+                        .background(
+                            isCompleted
+                                ? AnyShapeStyle(LinearGradient(
+                                    colors: [completedGradientStart, completedGradientEnd],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ))
+                                : AnyShapeStyle(cellColor)
+                        )
+                        .foregroundColor(.clear)
+                        .cornerRadius(cellCornerRadius)
+                        .shadow(radius: isCompleted ? 0 : 1)
 
-                Text("\(level.levelNumber)")
-                    .font(.headline)
-                    .fontWeight(.bold)
+                    VStack(spacing: 4) {
+                        if level.isLocked {
+                            Image("ic_lock")
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: lockIconSize, height: lockIconSize)
+                                .foregroundColor(.gray)
+                        }
 
-                if level.stars > 0 {
-                    StarRow(stars: level.stars)
+                        Text("\(level.levelNumber)")
+                            .font(.system(size: levelNumberSize, weight: .bold))
+                            .foregroundColor(isCompleted ? .white : .primary)
+
+                        if isCompleted {
+                            StarRow(stars: level.stars)
+                        }
+                    }
+                    .frame(width: size.width, height: size.height)
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding(12)
-            .background(backgroundColor)
-            .cornerRadius(cellCornerRadius)
-            .shadow(radius: 1)
+            .aspectRatio(1, contentMode: .fit)
         }
         .disabled(level.isLocked)
         .opacity(level.isLocked ? lockedOpacity : 1.0)
@@ -137,12 +167,15 @@ private struct StarRow: View {
 
     var body: some View {
         HStack(spacing: 2) {
-            ForEach(0..<Int32(maxStars), id: \.self) { index in
-                Image(systemName: index < stars ? "star.fill" : "star")
-                    .font(.system(size: starSize))
-                    .foregroundColor(index < stars ? .yellow : .gray.opacity(0.3))
+            ForEach(0..<maxStars, id: \.self) { i in
+                Image(Int32(i) < stars ? "ic_star_filled" : "ic_star_empty")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(Int32(i) < stars ? starGold : .gray.opacity(0.3))
             }
         }
+        .frame(width: starRowWidth, height: starRowHeight)
     }
 }
 

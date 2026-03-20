@@ -19,9 +19,6 @@ private let badgeFontSize: CGFloat = 15
 private let disabledAlpha: Double = 0.4
 private let swipeBackThreshold: CGFloat = 100
 
-private let pauseSymbol = "\u{2016}"
-private let playSymbol = "\u{25B6}"
-private let hintSymbol = "\u{1F4A1}"
 private let activeHintAlpha: Double = 0.5
 
 struct GameView: View {
@@ -184,6 +181,8 @@ private struct GameContentView: View {
             VStack {
                 GameTopBarView(scoreText: scoreText, timeText: timeText)
 
+                Spacer()
+
                 BoardView(
                     board: state.board,
                     onCellClicked: onCellClicked,
@@ -194,6 +193,8 @@ private struct GameContentView: View {
                     onShakeFinished: onShakeFinished
                 )
                 .padding()
+
+                Spacer()
 
                 GameBottomBarView(
                     canUndo: state.canUndo,
@@ -240,16 +241,13 @@ private struct PauseOverlayView: View {
             .ignoresSafeArea()
             .onTapGesture(perform: onResume)
             .overlay {
-                Canvas { context, size in
-                    let path = Path { p in
-                        p.move(to: CGPoint(x: size.width * 0.2, y: 0))
-                        p.addLine(to: CGPoint(x: size.width, y: size.height / 2))
-                        p.addLine(to: CGPoint(x: size.width * 0.2, y: size.height))
-                        p.closeSubpath()
-                    }
-                    context.fill(path, with: .color(.white.opacity(0.9)))
-                }
-                .frame(width: playIconSize, height: playIconSize)
+                Image("ic_play")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: playIconSize, height: playIconSize)
+                    .foregroundColor(.white.opacity(0.9))
+                    .allowsHitTesting(false)
             }
     }
 }
@@ -266,22 +264,26 @@ private struct GameBottomBarView: View {
     var body: some View {
         HStack(spacing: 16) {
             BottomCircleButton(
-                symbol: "\u{21A9}",
-                color: canUndo ? badgeGray : badgeGray.opacity(disabledAlpha),
+                iconName: "ic_undo",
+                color: badgeGray,
+                isDisabled: !canUndo,
                 action: onUndo
             )
-            .disabled(!canUndo)
 
             BottomCircleButton(
-                symbol: isPaused ? playSymbol : pauseSymbol,
+                iconName: isPaused ? "ic_play" : "ic_pause",
                 color: badgePurple,
                 action: onPause
             )
 
-            BottomCircleButton(symbol: "\u{21BB}", color: badgeRed, action: onReset)
+            BottomCircleButton(
+                iconName: "ic_reset",
+                color: badgeRed,
+                action: onReset
+            )
 
             BottomCircleButton(
-                symbol: hintSymbol,
+                iconName: "ic_hint",
                 color: hintsEnabled ? badgeOrange.opacity(activeHintAlpha) : badgeOrange,
                 action: onHint
             )
@@ -307,19 +309,24 @@ private struct PillBadge: View {
 }
 
 private struct BottomCircleButton: View {
-    let symbol: String
+    let iconName: String
     let color: Color
+    var isDisabled: Bool = false
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Text(symbol)
-                .font(.system(size: 18, weight: .bold))
+            Image(iconName)
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 20, height: 20)
                 .foregroundColor(.white)
                 .frame(width: bottomButtonSize, height: bottomButtonSize)
                 .background(color)
                 .clipShape(Circle())
         }
+        .disabled(isDisabled)
     }
 }
 
