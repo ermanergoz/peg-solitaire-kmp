@@ -38,6 +38,32 @@ val BadgeRed = Color(0xFFEF4444)
 val BadgeGray = Color(0xFF9CA3AF)
 val BadgeOrange = Color(0xFFF59E0B)
 
+val WarmBackground = Color(0xFFF5F0EB)
+val CompletedGradientStart = Color(0xFF6C63FF)
+val CompletedGradientEnd = Color(0xFF8B7FFF)
+val StarGold = Color(0xFFF59E0B)
+val StarEmpty = Color(0xFFDDDDDD)
+val ChevronGray = Color(0xFFCCCCCC)
+
+val ThumbnailEnglishStart = Color(0xFFA8D8EA)
+val ThumbnailEnglishEnd = Color(0xFF7EC8E3)
+val ThumbnailFrenchStart = Color(0xFFF8B4C8)
+val ThumbnailFrenchEnd = Color(0xFFF29DAE)
+val ThumbnailGermanStart = Color(0xFFF5E6CA)
+val ThumbnailGermanEnd = Color(0xFFE8D5B0)
+val ThumbnailAsymmetricStart = Color(0xFFB4E6C8)
+val ThumbnailAsymmetricEnd = Color(0xFF8FD4AA)
+val ThumbnailDiamondStart = Color(0xFFC8B4F0)
+val ThumbnailDiamondEnd = Color(0xFFB09DE0)
+
+fun thumbnailGradient(boardType: BoardType): Pair<Color, Color> = when (boardType) {
+    BoardType.ENGLISH -> ThumbnailEnglishStart to ThumbnailEnglishEnd
+    BoardType.FRENCH -> ThumbnailFrenchStart to ThumbnailFrenchEnd
+    BoardType.GERMAN -> ThumbnailGermanStart to ThumbnailGermanEnd
+    BoardType.ASYMMETRIC -> ThumbnailAsymmetricStart to ThumbnailAsymmetricEnd
+    BoardType.DIAMOND -> ThumbnailDiamondStart to ThumbnailDiamondEnd
+}
+
 // Board-themed backgrounds inspired by country flags
 private val EnglishBackgroundLight = Color(0xFFDCE4F8)
 private val EnglishBackgroundDark = Color(0xFF1A1E2E)

@@ -28,7 +28,8 @@ struct ContentView: View {
                 },
                 onSettingsClick: {
                     router.currentScreen = .settings
-                }
+                },
+                currentChallengeLevel: homeViewModel.uiState.currentChallengeLevel
             )
             .onAppear { homeViewModel.loadData() }
             .transition(.opacity)

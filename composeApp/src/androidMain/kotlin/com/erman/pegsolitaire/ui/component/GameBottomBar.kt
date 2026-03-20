@@ -10,28 +10,25 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.erman.pegsolitaire.R
 import com.erman.pegsolitaire.ui.theme.BadgeGray
 import com.erman.pegsolitaire.ui.theme.BadgeOrange
 import com.erman.pegsolitaire.ui.theme.BadgePurple
 import com.erman.pegsolitaire.ui.theme.BadgeRed
 
 private val BUTTON_SIZE = 48.dp
+private val ICON_SIZE = 20.dp
 private val BAR_HORIZONTAL_PADDING = 16.dp
 private val BAR_VERTICAL_PADDING = 12.dp
-private val ICON_FONT_SIZE = 18.sp
 private const val DISABLED_ALPHA = 0.4f
-private const val PAUSE_SYMBOL = "\u2016"
-private const val PLAY_SYMBOL = "\u25B6"
-private const val HINT_SYMBOL = "\uD83D\uDCA1"
 private const val ACTIVE_HINT_ALPHA = 0.5f
 
 @Composable
@@ -55,28 +52,28 @@ fun GameBottomBar(
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             BottomCircleButton(
-                text = "\u21A9",
+                iconRes = R.drawable.ic_undo,
                 color = if (canUndo) BadgeGray else BadgeGray.copy(alpha = DISABLED_ALPHA),
                 enabled = canUndo,
                 onClick = onUndoClicked
             )
 
             BottomCircleButton(
-                text = if (isPaused) PLAY_SYMBOL else PAUSE_SYMBOL,
+                iconRes = if (isPaused) R.drawable.ic_play else R.drawable.ic_pause,
                 color = BadgePurple,
                 enabled = true,
                 onClick = onPauseClicked
             )
 
             BottomCircleButton(
-                text = "\u21BB",
+                iconRes = R.drawable.ic_reset,
                 color = BadgeRed,
                 enabled = true,
                 onClick = onResetClicked
             )
 
             BottomCircleButton(
-                text = HINT_SYMBOL,
+                iconRes = R.drawable.ic_hint,
                 color = if (hintsEnabled) BadgeOrange.copy(alpha = ACTIVE_HINT_ALPHA) else BadgeOrange,
                 enabled = true,
                 onClick = onHintClicked
@@ -87,7 +84,7 @@ fun GameBottomBar(
 
 @Composable
 private fun BottomCircleButton(
-    text: String,
+    iconRes: Int,
     color: Color,
     enabled: Boolean,
     onClick: () -> Unit
@@ -97,17 +94,14 @@ private fun BottomCircleButton(
             .size(BUTTON_SIZE)
             .clip(CircleShape)
             .background(color)
-            .then(
-                if (enabled) Modifier.clickable(onClick = onClick)
-                else Modifier
-            ),
+            .then(if (enabled) Modifier.clickable(onClick = onClick) else Modifier),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = text,
-            color = Color.White,
-            fontSize = ICON_FONT_SIZE,
-            fontWeight = FontWeight.Bold
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(ICON_SIZE)
         )
     }
 }

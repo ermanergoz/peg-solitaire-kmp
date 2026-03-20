@@ -1,6 +1,7 @@
 import SwiftUI
 import Shared
 
+private let swipeBackThreshold: CGFloat = 100
 private let sectionSpacing: CGFloat = 24
 private let screenPadding: CGFloat = 24
 private let cardCornerRadius: CGFloat = 16
@@ -57,6 +58,14 @@ struct SettingsView: View {
         } message: {
             Text("This will permanently delete all your classic mode best scores and challenge mode progress.")
         }
+        .gesture(
+            DragGesture(minimumDistance: swipeBackThreshold)
+                .onEnded { value in
+                    if value.translation.width > swipeBackThreshold {
+                        onBack()
+                    }
+                }
+        )
         .onAppear {
             viewModel.onScoresReset = onBack
         }
