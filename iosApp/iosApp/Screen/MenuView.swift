@@ -23,6 +23,7 @@ struct MenuView: View {
     let bestScoreFor: (BoardType) -> GameScore?
     let onClassicSelected: (BoardType) -> Void
     let onChallengeSelected: () -> Void
+    let onPlayChallengeLevel: (Int32) -> Void
     let onSettingsClick: () -> Void
     let currentChallengeLevel: Int32
 
@@ -36,7 +37,8 @@ struct MenuView: View {
 
                 ChallengeHeroCard(
                     currentChallengeLevel: currentChallengeLevel,
-                    onSelected: onChallengeSelected
+                    onPlayClick: { onPlayChallengeLevel(currentChallengeLevel) },
+                    onBrowseAllClick: onChallengeSelected
                 )
                 .padding(.bottom, 28)
 
@@ -84,7 +86,8 @@ private struct TitleRow: View {
 
 private struct ChallengeHeroCard: View {
     let currentChallengeLevel: Int32
-    let onSelected: () -> Void
+    let onPlayClick: () -> Void
+    let onBrowseAllClick: () -> Void
 
     var body: some View {
         ZStack {
@@ -109,7 +112,7 @@ private struct ChallengeHeroCard: View {
                     .fontWeight(.bold)
                     .foregroundColor(.white)
 
-                Button(action: onSelected) {
+                Button(action: onPlayClick) {
                     HStack {
                         Spacer()
                         Text(strPlay())
@@ -125,7 +128,7 @@ private struct ChallengeHeroCard: View {
 
                 LevelDotsRow(currentLevel: currentChallengeLevel)
 
-                Button(action: onSelected) {
+                Button(action: onBrowseAllClick) {
                     HStack {
                         Spacer()
                         Text(browseAllLevels() + " →")

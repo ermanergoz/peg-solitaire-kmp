@@ -93,6 +93,7 @@ fun MenuScreen(
     homeViewModel: HomeViewModel,
     onClassicSelected: (BoardType) -> Unit,
     onChallengeSelected: () -> Unit,
+    onPlayChallengeLevel: (Int) -> Unit,
     onSettingsClick: () -> Unit
 ) {
     LaunchedEffect(Unit) {
@@ -117,7 +118,7 @@ fun MenuScreen(
 
         ChallengeHeroCard(
             currentChallengeLevel = uiState.currentChallengeLevel,
-            onPlayClick = onChallengeSelected,
+            onPlayClick = { onPlayChallengeLevel(uiState.currentChallengeLevel) },
             onBrowseAllClick = onChallengeSelected
         )
 

@@ -26,6 +26,9 @@ struct ContentView: View {
                 onChallengeSelected: {
                     router.currentScreen = .challengeLevelSelector
                 },
+                onPlayChallengeLevel: { levelNumber in
+                    router.currentScreen = .challengeGame(levelNumber: levelNumber)
+                },
                 onSettingsClick: {
                     router.currentScreen = .settings
                 },

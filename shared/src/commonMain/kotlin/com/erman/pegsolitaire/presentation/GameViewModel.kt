@@ -240,7 +240,7 @@ class GameViewModel(
 
         if (result.isGameOver) {
             stopTimer()
-            saveGameResult(pendingGameState!!, result.remainingPegs)
+            pendingGameState?.let { saveGameResult(it, result.remainingPegs) }
         }
     }
 
@@ -257,7 +257,7 @@ class GameViewModel(
                 }
                 performHapticUseCase(HapticType.SUCCESS)
             } catch (e: Exception) {
-                _events.tryEmit(GameEvent.GameOver(scoreText))
+                _events.emit(GameEvent.GameOver(scoreText))
             }
         }
     }

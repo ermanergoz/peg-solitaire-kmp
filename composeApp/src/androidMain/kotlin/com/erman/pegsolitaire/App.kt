@@ -47,6 +47,7 @@ fun App() {
                 is Screen.Menu -> MenuScreenRoute(
                     onClassicSelected = { currentScreen = Screen.ClassicGame(it) },
                     onChallengeSelected = { currentScreen = Screen.ChallengeLevelSelector },
+                    onPlayChallengeLevel = { currentScreen = Screen.ChallengeGame(it) },
                     onSettingsClick = { currentScreen = Screen.Settings }
                 )
                 is Screen.Settings -> SettingsRoute(
@@ -73,6 +74,7 @@ fun App() {
 private fun MenuScreenRoute(
     onClassicSelected: (BoardType) -> Unit,
     onChallengeSelected: () -> Unit,
+    onPlayChallengeLevel: (Int) -> Unit,
     onSettingsClick: () -> Unit
 ) {
     val homeViewModel = remember { KoinPlatform.getKoin().get<HomeViewModel>() }
@@ -80,6 +82,7 @@ private fun MenuScreenRoute(
         homeViewModel = homeViewModel,
         onClassicSelected = onClassicSelected,
         onChallengeSelected = onChallengeSelected,
+        onPlayChallengeLevel = onPlayChallengeLevel,
         onSettingsClick = onSettingsClick
     )
 }
