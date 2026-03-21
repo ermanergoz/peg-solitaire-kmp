@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">Mode Défi</string>
+    <string name="classic_mode">Mode Classique</string>
+    <string name="play">Jouer</string>
+    <string name="browse_all_levels">Voir Tous les Niveaux</string>
+    <string name="level_n">Niveau %1$d</string>
+    <string name="settings">Paramètres</string>
+    <string name="sound_effects">Effets Sonores</string>
+    <string name="haptic_feedback">Retour Haptique</string>
+    <string name="reset_all_scores">Réinitialiser les Scores</string>
+    <string name="reset_all_scores_confirm">Cela supprimera définitivement tous vos meilleurs scores du mode classique et la progression du mode défi.</string>
+    <string name="reset">Réinitialiser</string>
+    <string name="cancel">Annuler</string>
+    <string name="challenge_levels">Niveaux de Défi</string>
+    <string name="game_over">Partie Terminée</string>
+    <string name="quit">Quitter</string>
+    <string name="restart">Recommencer</string>
+    <string name="next">Suivant</string>
+    <string name="retry">Réessayer</string>
+    <string name="not_played">Non joué</string>
+    <string name="generic_error">Une erreur est survenue. Veuillez réessayer.</string>
+    <string name="score_left">%1$d restants</string>
+</resources>

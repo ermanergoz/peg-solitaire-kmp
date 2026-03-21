@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">チャレンジモード</string>
+    <string name="classic_mode">クラシックモード</string>
+    <string name="play">プレイ</string>
+    <string name="browse_all_levels">全レベルを見る</string>
+    <string name="level_n">レベル %1$d</string>
+    <string name="settings">設定</string>
+    <string name="sound_effects">効果音</string>
+    <string name="haptic_feedback">触覚フィードバック</string>
+    <string name="reset_all_scores">スコアをリセット</string>
+    <string name="reset_all_scores_confirm">クラシックモードのベストスコアとチャレンジモードの進行状況がすべて完全に削除されます。</string>
+    <string name="reset">リセット</string>
+    <string name="cancel">キャンセル</string>
+    <string name="challenge_levels">チャレンジレベル</string>
+    <string name="game_over">ゲームオーバー</string>
+    <string name="quit">終了</string>
+    <string name="restart">再スタート</string>
+    <string name="next">次へ</string>
+    <string name="retry">再試行</string>
+    <string name="not_played">未プレイ</string>
+    <string name="generic_error">エラーが発生しました。もう一度お試しください。</string>
+    <string name="score_left">残り %1$d</string>
+</resources>

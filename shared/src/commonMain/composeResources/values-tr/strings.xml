@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">Meydan Okuma Modu</string>
+    <string name="classic_mode">Klasik Mod</string>
+    <string name="play">Oyna</string>
+    <string name="browse_all_levels">Tüm Seviyeleri Gör</string>
+    <string name="level_n">Seviye %1$d</string>
+    <string name="settings">Ayarlar</string>
+    <string name="sound_effects">Ses Efektleri</string>
+    <string name="haptic_feedback">Dokunsal Geri Bildirim</string>
+    <string name="reset_all_scores">Tüm Skorları Sıfırla</string>
+    <string name="reset_all_scores_confirm">Bu işlem klasik moddaki tüm en iyi skorlarınızı ve meydan okuma modundaki ilerlemenizi kalıcı olarak silecektir.</string>
+    <string name="reset">Sıfırla</string>
+    <string name="cancel">İptal</string>
+    <string name="challenge_levels">Meydan Okuma Seviyeleri</string>
+    <string name="game_over">Oyun Bitti</string>
+    <string name="quit">Çık</string>
+    <string name="restart">Yeniden Başla</string>
+    <string name="next">Sonraki</string>
+    <string name="retry">Tekrar Dene</string>
+    <string name="not_played">Oynanmadı</string>
+    <string name="generic_error">Bir şeyler ters gitti. Lütfen tekrar deneyin.</string>
+    <string name="score_left">%1$d kaldı</string>
+</resources>

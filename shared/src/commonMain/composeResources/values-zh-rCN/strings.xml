@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">挑战模式</string>
+    <string name="classic_mode">经典模式</string>
+    <string name="play">开始</string>
+    <string name="browse_all_levels">浏览所有关卡</string>
+    <string name="level_n">关卡 %1$d</string>
+    <string name="settings">设置</string>
+    <string name="sound_effects">音效</string>
+    <string name="haptic_feedback">触觉反馈</string>
+    <string name="reset_all_scores">重置所有分数</string>
+    <string name="reset_all_scores_confirm">这将永久删除您所有经典模式的最高分和挑战模式的进度。</string>
+    <string name="reset">重置</string>
+    <string name="cancel">取消</string>
+    <string name="challenge_levels">挑战关卡</string>
+    <string name="game_over">游戏结束</string>
+    <string name="quit">退出</string>
+    <string name="restart">重新开始</string>
+    <string name="next">下一关</string>
+    <string name="retry">重试</string>
+    <string name="not_played">未游玩</string>
+    <string name="generic_error">出了点问题，请重试。</string>
+    <string name="score_left">剩余 %1$d</string>
+</resources>

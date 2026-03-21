@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">Sinov Rejimi</string>
+    <string name="classic_mode">Klassik Rejim</string>
+    <string name="play">Oʻynash</string>
+    <string name="browse_all_levels">Barcha Darajalarni Koʻrish</string>
+    <string name="level_n">Daraja %1$d</string>
+    <string name="settings">Sozlamalar</string>
+    <string name="sound_effects">Tovush Effektlari</string>
+    <string name="haptic_feedback">Taktil Qaytaloq</string>
+    <string name="reset_all_scores">Barcha Ballarni Tiklash</string>
+    <string name="reset_all_scores_confirm">Bu klassik rejimdagi barcha eng yaxshi ballaringizni va sinov rejimidagi taraqqiyotingizni butunlay oʻchiradi.</string>
+    <string name="reset">Tiklash</string>
+    <string name="cancel">Bekor Qilish</string>
+    <string name="challenge_levels">Sinov Darajalari</string>
+    <string name="game_over">Oʻyin Tugadi</string>
+    <string name="quit">Chiqish</string>
+    <string name="restart">Qayta Boshlash</string>
+    <string name="next">Keyingi</string>
+    <string name="retry">Qayta Urinish</string>
+    <string name="not_played">Oʻynalmagan</string>
+    <string name="generic_error">Xatolik yuz berdi. Iltimos qayta urinib koʻring.</string>
+    <string name="score_left">%1$d qoldi</string>
+</resources>

@@ -43,6 +43,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.erman.pegsolitaire.R
+import org.jetbrains.compose.resources.stringResource
+import pegsolitaire.composeapp.generated.resources.Res
+import pegsolitaire.composeapp.generated.resources.app_title
+import pegsolitaire.composeapp.generated.resources.browse_all_levels
+import pegsolitaire.composeapp.generated.resources.challenge_mode
+import pegsolitaire.composeapp.generated.resources.classic_mode
+import pegsolitaire.composeapp.generated.resources.level_n
+import pegsolitaire.composeapp.generated.resources.not_played
+import pegsolitaire.composeapp.generated.resources.play
+import pegsolitaire.composeapp.generated.resources.score_left
+import pegsolitaire.composeapp.generated.resources.settings
 import com.erman.pegsolitaire.domain.model.GameScore
 import com.erman.pegsolitaire.engine.BoardType
 import com.erman.pegsolitaire.presentation.HomeViewModel
@@ -70,7 +81,6 @@ private val BOARD_NAME_FONT_SIZE = 14.sp
 private val SCORE_FONT_SIZE = 11.sp
 private val LEVEL_DOT_SIZE = 28.dp
 private val PLAY_BUTTON_CORNER_RADIUS = 12.dp
-private const val NOT_PLAYED_TEXT = "Not played"
 private const val SCORE_MIDDLE_DOT = " \u00B7 "
 private const val HERO_LABEL_ALPHA = 0.7f
 private const val LEVEL_DOT_COMPLETED_ALPHA = 0.3f
@@ -129,7 +139,7 @@ private fun TitleRow(onSettingsClick: () -> Unit, isDark: Boolean) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Peg Solitaire",
+            text = stringResource(Res.string.app_title),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -151,7 +161,7 @@ private fun SettingsButton(onClick: () -> Unit, isDark: Boolean) {
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_settings),
-            contentDescription = "Settings",
+            contentDescription = stringResource(Res.string.settings),
             tint = if (isDark) TextSecondaryDark else TextSecondaryLight,
             modifier = Modifier.size(SETTINGS_ICON_SIZE)
         )
@@ -179,7 +189,7 @@ private fun ChallengeHeroCard(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "CHALLENGE MODE",
+                text = stringResource(Res.string.challenge_mode).uppercase(),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 1.5.sp,
@@ -190,7 +200,7 @@ private fun ChallengeHeroCard(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Level $currentChallengeLevel",
+                text = stringResource(Res.string.level_n, currentChallengeLevel),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -209,7 +219,7 @@ private fun ChallengeHeroCard(
                 )
             ) {
                 Text(
-                    text = "Play",
+                    text = stringResource(Res.string.play),
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     textAlign = TextAlign.Center
@@ -223,7 +233,7 @@ private fun ChallengeHeroCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Browse All Levels \u2192",
+                text = "${stringResource(Res.string.browse_all_levels)} \u2192",
                 fontSize = 13.sp,
                 color = Color.White.copy(alpha = HERO_LABEL_ALPHA),
                 textAlign = TextAlign.Center,
@@ -291,7 +301,7 @@ private fun ClassicModeSection(
     onClassicSelected: (BoardType) -> Unit
 ) {
     Text(
-        text = "CLASSIC MODE",
+        text = stringResource(Res.string.classic_mode).uppercase(),
         fontSize = 11.sp,
         fontWeight = FontWeight.SemiBold,
         letterSpacing = 1.5.sp,
@@ -323,9 +333,10 @@ private fun ClassicBoardCard(
     val scoreColor = if (isDark) TextSecondaryDark else TextSecondaryLight
 
     val boardName = boardType.name.lowercase().replaceFirstChar { it.uppercase() }
+    val notPlayedText = stringResource(Res.string.not_played)
     val scoreText = score?.let {
-        "${it.remainingPegs} left$SCORE_MIDDLE_DOT${formatElapsedTime(it.elapsedTimeMillis)}"
-    } ?: NOT_PLAYED_TEXT
+        "${stringResource(Res.string.score_left, it.remainingPegs)}$SCORE_MIDDLE_DOT${formatElapsedTime(it.elapsedTimeMillis)}"
+    } ?: notPlayedText
 
     Card(
         modifier = Modifier

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">Synag Rejesi</string>
+    <string name="classic_mode">Klassyk Rejem</string>
+    <string name="play">Oýna</string>
+    <string name="browse_all_levels">Ähli Derejeleri Gör</string>
+    <string name="level_n">Dereje %1$d</string>
+    <string name="settings">Sazlamalar</string>
+    <string name="sound_effects">Ses Effektleri</string>
+    <string name="haptic_feedback">Duýgy Jogaby</string>
+    <string name="reset_all_scores">Ähli Ballary Täzele</string>
+    <string name="reset_all_scores_confirm">Bu klassyk rejemdäki ähli iň gowy ballaryňyzy we synag rejimindäki öňe gidişligiňizi hemişelik öçürer.</string>
+    <string name="reset">Täzele</string>
+    <string name="cancel">Ýatyr</string>
+    <string name="challenge_levels">Synag Derejeleri</string>
+    <string name="game_over">Oýun Gutardy</string>
+    <string name="quit">Çyk</string>
+    <string name="restart">Täzeden Başla</string>
+    <string name="next">Indiki</string>
+    <string name="retry">Gaýtadan Synanyş</string>
+    <string name="not_played">Oýnalmady</string>
+    <string name="generic_error">Näsazlyk ýüze çykdy. Gaýtadan synanyşyň.</string>
+    <string name="score_left">%1$d galdy</string>
+</resources>

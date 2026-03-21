@@ -43,7 +43,7 @@ class ChallengeLevelSelectorViewModel(
                     isLoading = false
                 )
             } catch (e: Exception) {
-                _uiState.value = ChallengeLevelSelectorUiState(isLoading = false, error = GENERIC_ERROR_MESSAGE)
+                _uiState.value = ChallengeLevelSelectorUiState(isLoading = false, error = genericErrorMessage())
             }
         }
     }
@@ -57,7 +57,7 @@ class ChallengeLevelSelectorViewModel(
                 nextFrom += PAGE_SIZE
                 _uiState.update { it.copy(levels = it.levels + moreLevels, isLoadingMore = false) }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoadingMore = false, error = GENERIC_ERROR_MESSAGE) }
+                _uiState.update { it.copy(isLoadingMore = false, error = genericErrorMessage()) }
             }
         }
     }

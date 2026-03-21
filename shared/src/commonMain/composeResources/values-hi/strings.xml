@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">चुनौती मोड</string>
+    <string name="classic_mode">क्लासिक मोड</string>
+    <string name="play">खेलें</string>
+    <string name="browse_all_levels">सभी स्तर देखें</string>
+    <string name="level_n">स्तर %1$d</string>
+    <string name="settings">सेटिंग्स</string>
+    <string name="sound_effects">ध्वनि प्रभाव</string>
+    <string name="haptic_feedback">हैप्टिक फीडबैक</string>
+    <string name="reset_all_scores">सभी स्कोर रीसेट करें</string>
+    <string name="reset_all_scores_confirm">यह आपके क्लासिक मोड के सभी सर्वश्रेष्ठ स्कोर और चुनौती मोड की प्रगति को स्थायी रूप से हटा देगा।</string>
+    <string name="reset">रीसेट</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="challenge_levels">चुनौती स्तर</string>
+    <string name="game_over">खेल समाप्त</string>
+    <string name="quit">बाहर</string>
+    <string name="restart">पुनः आरंभ</string>
+    <string name="next">अगला</string>
+    <string name="retry">पुनः प्रयास</string>
+    <string name="not_played">नहीं खेला</string>
+    <string name="generic_error">कुछ गलत हो गया। कृपया पुनः प्रयास करें।</string>
+    <string name="score_left">%1$d शेष</string>
+</resources>

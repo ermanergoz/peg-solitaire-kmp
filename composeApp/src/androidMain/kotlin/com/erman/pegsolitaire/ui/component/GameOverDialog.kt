@@ -17,6 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.stringResource
+import pegsolitaire.composeapp.generated.resources.Res
+import pegsolitaire.composeapp.generated.resources.game_over
+import pegsolitaire.composeapp.generated.resources.next
+import pegsolitaire.composeapp.generated.resources.quit
+import pegsolitaire.composeapp.generated.resources.restart
 
 private const val STAR_FILLED = "\u2605"
 private const val STAR_EMPTY = "\u2606"
@@ -34,7 +40,7 @@ fun GameOverDialog(
         onDismissRequest = {},
         title = {
             Text(
-                text = "Game Over",
+                text = stringResource(Res.string.game_over),
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -73,14 +79,14 @@ fun GameOverDialog(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 TextButton(onClick = onQuit) {
-                    Text("Quit")
+                    Text(stringResource(Res.string.quit))
                 }
                 TextButton(onClick = onRestart) {
-                    Text("Restart")
+                    Text(stringResource(Res.string.restart))
                 }
                 if (onNextLevel != null) {
                     TextButton(onClick = onNextLevel) {
-                        Text("Next")
+                        Text(stringResource(Res.string.next))
                     }
                 }
             }

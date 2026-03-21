@@ -49,7 +49,7 @@ class SettingsViewModel(
                     _uiState.update { it.copy(soundEnabled = sound, hapticEnabled = haptic) }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = GENERIC_ERROR_MESSAGE) }
+                _uiState.update { it.copy(error = genericErrorMessage()) }
             }
         }
     }
@@ -59,7 +59,7 @@ class SettingsViewModel(
             try {
                 updateSettingUseCase.setSoundEnabled(!_uiState.value.soundEnabled)
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = GENERIC_ERROR_MESSAGE) }
+                _uiState.update { it.copy(error = genericErrorMessage()) }
             }
         }
     }
@@ -69,7 +69,7 @@ class SettingsViewModel(
             try {
                 updateSettingUseCase.setHapticEnabled(!_uiState.value.hapticEnabled)
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = GENERIC_ERROR_MESSAGE) }
+                _uiState.update { it.copy(error = genericErrorMessage()) }
             }
         }
     }
@@ -85,7 +85,7 @@ class SettingsViewModel(
                 resetAllScoresUseCase()
                 _events.tryEmit(SettingsEvent.ScoresReset)
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = GENERIC_ERROR_MESSAGE) }
+                _uiState.update { it.copy(error = genericErrorMessage()) }
             }
         }
     }

@@ -78,7 +78,7 @@ class GameViewModel(
             )
             startTimer()
         } catch (e: Exception) {
-            _state.value = GameUiState(error = GENERIC_ERROR_MESSAGE)
+            _state.value = GameUiState(error = genericErrorMessage())
         }
     }
 
@@ -104,7 +104,7 @@ class GameViewModel(
                 )
                 startTimer()
             } catch (e: Exception) {
-                _state.value = GameUiState(error = GENERIC_ERROR_MESSAGE)
+                _state.value = GameUiState(error = genericErrorMessage())
             }
         }
     }
