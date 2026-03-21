@@ -27,14 +27,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.erman.pegsolitaire.presentation.SettingsUiState
 import org.jetbrains.compose.resources.stringResource
-import pegsolitaire.composeapp.generated.resources.Res
-import pegsolitaire.composeapp.generated.resources.cancel
-import pegsolitaire.composeapp.generated.resources.haptic_feedback
-import pegsolitaire.composeapp.generated.resources.reset
-import pegsolitaire.composeapp.generated.resources.reset_all_scores
-import pegsolitaire.composeapp.generated.resources.reset_all_scores_confirm
-import pegsolitaire.composeapp.generated.resources.settings
-import pegsolitaire.composeapp.generated.resources.sound_effects
+import pegsolitaire.shared.generated.resources.Res
+import pegsolitaire.shared.generated.resources.cancel
+import pegsolitaire.shared.generated.resources.haptic_feedback
+import pegsolitaire.shared.generated.resources.reset
+import pegsolitaire.shared.generated.resources.reset_all_scores
+import pegsolitaire.shared.generated.resources.reset_all_scores_confirm
+import pegsolitaire.shared.generated.resources.settings
+import pegsolitaire.shared.generated.resources.sound_effects
 
 private const val CARD_CORNER_RADIUS = 16
 private const val BUTTON_CORNER_RADIUS = 12

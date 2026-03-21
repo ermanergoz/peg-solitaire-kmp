@@ -49,9 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.erman.pegsolitaire.R
 import org.jetbrains.compose.resources.stringResource
-import pegsolitaire.composeapp.generated.resources.Res
-import pegsolitaire.composeapp.generated.resources.challenge_levels
-import pegsolitaire.composeapp.generated.resources.retry
+import pegsolitaire.shared.generated.resources.Res
+import pegsolitaire.shared.generated.resources.challenge_levels
+import pegsolitaire.shared.generated.resources.retry
 import com.erman.pegsolitaire.domain.model.LevelItem
 import com.erman.pegsolitaire.presentation.ChallengeLevelSelectorViewModel
 import com.erman.pegsolitaire.ui.theme.CardBackgroundDark
