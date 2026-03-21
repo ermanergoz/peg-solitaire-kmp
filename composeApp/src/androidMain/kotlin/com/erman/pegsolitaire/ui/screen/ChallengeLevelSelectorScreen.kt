@@ -48,6 +48,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.erman.pegsolitaire.R
+import org.jetbrains.compose.resources.stringResource
+import pegsolitaire.composeapp.generated.resources.Res
+import pegsolitaire.composeapp.generated.resources.challenge_levels
+import pegsolitaire.composeapp.generated.resources.retry
 import com.erman.pegsolitaire.domain.model.LevelItem
 import com.erman.pegsolitaire.presentation.ChallengeLevelSelectorViewModel
 import com.erman.pegsolitaire.ui.theme.CardBackgroundDark
@@ -128,7 +132,7 @@ private fun LevelSelectorTopBar() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Challenge Levels",
+            text = stringResource(Res.string.challenge_levels),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -271,6 +275,6 @@ private fun ErrorContent(message: String, onRetry: () -> Unit) {
             color = MaterialTheme.colorScheme.error
         )
         Spacer(modifier = Modifier.height(16.dp))
-        TextButton(onClick = onRetry) { Text("Retry") }
+        TextButton(onClick = onRetry) { Text(stringResource(Res.string.retry)) }
     }
 }

@@ -1,7 +1,9 @@
 package com.erman.pegsolitaire.presentation
 
+import com.erman.pegsolitaire.localization.AppStrings
+
 const val SCORE_SEPARATOR = " / "
-internal const val GENERIC_ERROR_MESSAGE = "Something went wrong. Please try again."
+internal fun genericErrorMessage(): String = AppStrings.genericError()
 
 private const val MILLIS_PER_SECOND = 1000L
 private const val SECONDS_PER_MINUTE = 60L

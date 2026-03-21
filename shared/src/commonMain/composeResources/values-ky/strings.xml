@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">Сыноо Режими</string>
+    <string name="classic_mode">Классикалык Режим</string>
+    <string name="play">Ойнотуу</string>
+    <string name="browse_all_levels">Бардык Деңгээлдерди Көрүү</string>
+    <string name="level_n">Деңгээл %1$d</string>
+    <string name="settings">Орнотуулар</string>
+    <string name="sound_effects">Үн Эффекттери</string>
+    <string name="haptic_feedback">Тийүү Пикири</string>
+    <string name="reset_all_scores">Бардык Упайларды Баштапкыга Келтирүү</string>
+    <string name="reset_all_scores_confirm">Бул классикалык режимдеги бардык мыкты упайларыңызды жана сыноо режиминдеги прогрессиңизди биротоло жок кылат.</string>
+    <string name="reset">Баштапкыга Келтирүү</string>
+    <string name="cancel">Жокко Чыгаруу</string>
+    <string name="challenge_levels">Сыноо Деңгээлдери</string>
+    <string name="game_over">Оюн Бүттү</string>
+    <string name="quit">Чыгуу</string>
+    <string name="restart">Кайра Баштоо</string>
+    <string name="next">Кийинки</string>
+    <string name="retry">Кайра Аракет</string>
+    <string name="not_played">Ойнолгон эмес</string>
+    <string name="generic_error">Бир нерсе туура эмес болду. Кайра аракет кылыңыз.</string>
+    <string name="score_left">%1$d калды</string>
+</resources>

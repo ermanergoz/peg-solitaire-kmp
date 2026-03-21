@@ -54,7 +54,7 @@ class HomeViewModel(
                     isLoading = false
                 )
             } catch (e: Exception) {
-                _uiState.value = HomeUiState(isLoading = false, error = GENERIC_ERROR_MESSAGE)
+                _uiState.value = HomeUiState(isLoading = false, error = genericErrorMessage())
             }
         }
     }
@@ -65,7 +65,7 @@ class HomeViewModel(
                 clearChallengeProgressUseCase()
                 loadData()
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = GENERIC_ERROR_MESSAGE)
+                _uiState.value = _uiState.value.copy(error = genericErrorMessage())
             }
         }
     }

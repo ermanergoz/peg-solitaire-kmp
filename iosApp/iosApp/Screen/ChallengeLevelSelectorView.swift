@@ -63,7 +63,7 @@ struct ChallengeLevelSelectorView: View {
 
 private struct LevelSelectorTopBar: View {
     var body: some View {
-        Text("Challenge Levels")
+        Text(challengeLevels())
             .font(.title2)
             .fontWeight(.bold)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -187,7 +187,7 @@ private struct ErrorContent: View {
         VStack(spacing: 16) {
             Text(message)
                 .foregroundColor(.red)
-            Button("Retry", action: onRetry)
+            Button(strRetry(), action: onRetry)
         }
     }
 }

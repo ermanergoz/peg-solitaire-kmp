@@ -15,20 +15,20 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: sectionSpacing) {
-            Text("Settings")
+            Text(strSettings())
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.pink)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack(spacing: 0) {
-                Toggle("Sound Effects", isOn: Binding(
+                Toggle(soundEffects(), isOn: Binding(
                     get: { viewModel.uiState.soundEnabled },
                     set: { _ in viewModel.toggleSound() }
                 ))
                 .padding(.vertical, toggleVerticalPadding)
 
-                Toggle("Haptic Feedback", isOn: Binding(
+                Toggle(hapticFeedback(), isOn: Binding(
                     get: { viewModel.uiState.hapticEnabled },
                     set: { _ in viewModel.toggleHaptic() }
                 ))
@@ -40,7 +40,7 @@ struct SettingsView: View {
             .shadow(radius: cardShadowRadius)
 
             Button(action: { viewModel.requestResetScores() }) {
-                Text("Reset All Scores")
+                Text(resetAllScores())
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -49,14 +49,14 @@ struct SettingsView: View {
             Spacer()
         }
         .padding(screenPadding)
-        .alert("Reset All Scores", isPresented: Binding(
+        .alert(resetAllScores(), isPresented: Binding(
             get: { viewModel.uiState.showResetConfirmation },
             set: { if !$0 { viewModel.dismissResetDialog() } }
         )) {
-            Button("Cancel", role: .cancel) { viewModel.dismissResetDialog() }
-            Button("Reset", role: .destructive) { viewModel.confirmResetScores() }
+            Button(strCancel(), role: .cancel) { viewModel.dismissResetDialog() }
+            Button(strReset(), role: .destructive) { viewModel.confirmResetScores() }
         } message: {
-            Text("This will permanently delete all your classic mode best scores and challenge mode progress.")
+            Text(resetAllScoresConfirm())
         }
         .gesture(
             DragGesture(minimumDistance: swipeBackThreshold)

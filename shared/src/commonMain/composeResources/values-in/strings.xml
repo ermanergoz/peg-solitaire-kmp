@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">Mode Tantangan</string>
+    <string name="classic_mode">Mode Klasik</string>
+    <string name="play">Main</string>
+    <string name="browse_all_levels">Lihat Semua Level</string>
+    <string name="level_n">Level %1$d</string>
+    <string name="settings">Pengaturan</string>
+    <string name="sound_effects">Efek Suara</string>
+    <string name="haptic_feedback">Umpan Balik Haptik</string>
+    <string name="reset_all_scores">Atur Ulang Semua Skor</string>
+    <string name="reset_all_scores_confirm">Ini akan menghapus secara permanen semua skor terbaik mode klasik dan kemajuan mode tantangan Anda.</string>
+    <string name="reset">Atur Ulang</string>
+    <string name="cancel">Batal</string>
+    <string name="challenge_levels">Level Tantangan</string>
+    <string name="game_over">Permainan Selesai</string>
+    <string name="quit">Keluar</string>
+    <string name="restart">Mulai Ulang</string>
+    <string name="next">Berikutnya</string>
+    <string name="retry">Coba Lagi</string>
+    <string name="not_played">Belum dimainkan</string>
+    <string name="generic_error">Terjadi kesalahan. Silakan coba lagi.</string>
+    <string name="score_left">%1$d tersisa</string>
+</resources>

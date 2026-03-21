@@ -26,6 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.erman.pegsolitaire.presentation.SettingsUiState
+import org.jetbrains.compose.resources.stringResource
+import pegsolitaire.composeapp.generated.resources.Res
+import pegsolitaire.composeapp.generated.resources.cancel
+import pegsolitaire.composeapp.generated.resources.haptic_feedback
+import pegsolitaire.composeapp.generated.resources.reset
+import pegsolitaire.composeapp.generated.resources.reset_all_scores
+import pegsolitaire.composeapp.generated.resources.reset_all_scores_confirm
+import pegsolitaire.composeapp.generated.resources.settings
+import pegsolitaire.composeapp.generated.resources.sound_effects
 
 private const val CARD_CORNER_RADIUS = 16
 private const val BUTTON_CORNER_RADIUS = 12
@@ -55,7 +64,7 @@ fun SettingsScreen(
             .padding(SCREEN_PADDING.dp)
     ) {
         Text(
-            text = "Settings",
+            text = stringResource(Res.string.settings),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -71,12 +80,12 @@ fun SettingsScreen(
         ) {
             Column(modifier = Modifier.padding(CARD_CONTENT_PADDING.dp)) {
                 SettingsToggleRow(
-                    label = "Sound Effects",
+                    label = stringResource(Res.string.sound_effects),
                     checked = uiState.soundEnabled,
                     onToggle = onToggleSound
                 )
                 SettingsToggleRow(
-                    label = "Haptic Feedback",
+                    label = stringResource(Res.string.haptic_feedback),
                     checked = uiState.hapticEnabled,
                     onToggle = onToggleHaptic
                 )
@@ -91,23 +100,23 @@ fun SettingsScreen(
             shape = RoundedCornerShape(BUTTON_CORNER_RADIUS.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
-            Text("Reset All Scores")
+            Text(stringResource(Res.string.reset_all_scores))
         }
     }
 
     if (uiState.showResetConfirmation) {
         AlertDialog(
             onDismissRequest = onDismissReset,
-            title = { Text("Reset All Scores") },
-            text = { Text("This will permanently delete all your classic mode best scores and challenge mode progress.") },
+            title = { Text(stringResource(Res.string.reset_all_scores)) },
+            text = { Text(stringResource(Res.string.reset_all_scores_confirm)) },
             confirmButton = {
                 TextButton(onClick = onConfirmReset) {
-                    Text("Reset", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(Res.string.reset), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onDismissReset) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.cancel))
                 }
             }
         )

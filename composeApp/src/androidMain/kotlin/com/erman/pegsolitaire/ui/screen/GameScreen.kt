@@ -33,6 +33,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.erman.pegsolitaire.R
+import org.jetbrains.compose.resources.stringResource
+import pegsolitaire.composeapp.generated.resources.Res
+import pegsolitaire.composeapp.generated.resources.quit
+import pegsolitaire.composeapp.generated.resources.retry
 import com.erman.pegsolitaire.domain.model.GameState
 import com.erman.pegsolitaire.presentation.GameEvent
 import com.erman.pegsolitaire.presentation.GameViewModel
@@ -130,8 +134,8 @@ private fun ErrorContent(message: String, onRetry: () -> Unit, onQuit: () -> Uni
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            TextButton(onClick = onQuit) { Text("Quit") }
-            TextButton(onClick = onRetry) { Text("Retry") }
+            TextButton(onClick = onQuit) { Text(stringResource(Res.string.quit)) }
+            TextButton(onClick = onRetry) { Text(stringResource(Res.string.retry)) }
         }
     }
 }

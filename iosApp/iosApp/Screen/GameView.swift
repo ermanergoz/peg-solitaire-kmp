@@ -100,7 +100,7 @@ struct GameView: View {
                 viewModel.pauseTimer()
             }
         }
-        .alert("Game Over", isPresented: isGameOverPresented) {
+        .alert(gameOver(), isPresented: isGameOverPresented) {
             GameOverAlertButtons(
                 onQuit: {
                     gameOverInfo = nil
@@ -143,8 +143,8 @@ private struct ErrorContentView: View {
             Text(message)
                 .foregroundColor(.red)
             HStack(spacing: 16) {
-                Button("Quit", action: onQuit)
-                Button("Retry", action: onRetry)
+                Button(strQuit(), action: onQuit)
+                Button(strRetry(), action: onRetry)
             }
         }
     }
@@ -336,10 +336,10 @@ private struct GameOverAlertButtons: View {
     let onNextLevel: (() -> Void)?
 
     var body: some View {
-        Button("Quit", action: onQuit)
-        Button("Restart", action: onRestart)
+        Button(strQuit(), action: onQuit)
+        Button(strRestart(), action: onRestart)
         if let onNextLevel = onNextLevel {
-            Button("Next", action: onNextLevel)
+            Button(strNext(), action: onNextLevel)
         }
     }
 }

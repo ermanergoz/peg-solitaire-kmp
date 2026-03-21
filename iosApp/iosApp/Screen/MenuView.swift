@@ -12,7 +12,6 @@ private let boardNameFontSize: CGFloat = 14
 private let scoreFontSize: CGFloat = 11
 private let levelDotSize: CGFloat = 28
 private let playButtonCornerRadius: CGFloat = 12
-private let notPlayedText = "Not played"
 private let scoreMiddleDot = " \u{00B7} "
 private let heroLabelAlpha = 0.7
 private let levelDotsBeforeCount = 3
@@ -60,7 +59,7 @@ private struct TitleRow: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            Text("Peg Solitaire")
+            Text(appTitle())
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.pink)
@@ -99,13 +98,13 @@ private struct ChallengeHeroCard: View {
                 )
 
             VStack(alignment: .leading, spacing: 16) {
-                Text("CHALLENGE MODE")
+                Text(challengeMode().uppercased())
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(.white.opacity(heroLabelAlpha))
                     .kerning(1.2)
 
-                Text("Level \(currentChallengeLevel)")
+                Text(levelN(currentChallengeLevel))
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -113,7 +112,7 @@ private struct ChallengeHeroCard: View {
                 Button(action: onSelected) {
                     HStack {
                         Spacer()
-                        Text("Play")
+                        Text(strPlay())
                             .font(.headline)
                             .foregroundColor(completedGradientStart)
                         Spacer()
@@ -129,7 +128,7 @@ private struct ChallengeHeroCard: View {
                 Button(action: onSelected) {
                     HStack {
                         Spacer()
-                        Text("Browse All Levels →")
+                        Text(browseAllLevels() + " →")
                             .font(.subheadline)
                             .foregroundColor(.white.opacity(heroLabelAlpha))
                         Spacer()
@@ -185,7 +184,7 @@ private struct ClassicModeSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("CLASSIC MODE")
+            Text(classicMode().uppercased())
                 .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundColor(.secondary)
@@ -235,11 +234,11 @@ private struct ClassicBoardCard: View {
     }
 
     private var scoreText: String {
-        guard let score else { return notPlayedText }
+        guard let score else { return notPlayed() }
         let totalSeconds = score.elapsedTimeMillis / millisPerSecond
         let minutes = totalSeconds / secondsPerMinute
         let seconds = totalSeconds % secondsPerMinute
-        return "\(score.remainingPegs) left\(scoreMiddleDot)\(String(format: "%02d:%02d", minutes, seconds))"
+        return "\(scoreLeft(score.remainingPegs))\(scoreMiddleDot)\(String(format: "%02d:%02d", minutes, seconds))"
     }
 }
 

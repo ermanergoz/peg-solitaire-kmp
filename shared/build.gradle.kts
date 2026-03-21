@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -31,6 +33,8 @@ kotlin {
             implementation(libs.multiplatform.settings.coroutines)
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.components.resources)
         }
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)

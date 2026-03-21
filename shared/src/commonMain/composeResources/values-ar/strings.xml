@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">وضع التحدي</string>
+    <string name="classic_mode">الوضع الكلاسيكي</string>
+    <string name="play">العب</string>
+    <string name="browse_all_levels">تصفح جميع المستويات</string>
+    <string name="level_n">المستوى %1$d</string>
+    <string name="settings">الإعدادات</string>
+    <string name="sound_effects">المؤثرات الصوتية</string>
+    <string name="haptic_feedback">الاستجابة اللمسية</string>
+    <string name="reset_all_scores">إعادة تعيين النتائج</string>
+    <string name="reset_all_scores_confirm">سيؤدي هذا إلى حذف جميع أفضل نتائجك في الوضع الكلاسيكي وتقدمك في وضع التحدي بشكل دائم.</string>
+    <string name="reset">إعادة تعيين</string>
+    <string name="cancel">إلغاء</string>
+    <string name="challenge_levels">مستويات التحدي</string>
+    <string name="game_over">انتهت اللعبة</string>
+    <string name="quit">خروج</string>
+    <string name="restart">إعادة</string>
+    <string name="next">التالي</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="not_played">لم يُلعب</string>
+    <string name="generic_error">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
+    <string name="score_left">متبقي %1$d</string>
+</resources>

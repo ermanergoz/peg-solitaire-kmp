@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_title">Peg Solitaire</string>
+    <string name="challenge_mode">Çağırış Rejimi</string>
+    <string name="classic_mode">Klassik Rejim</string>
+    <string name="play">Oyna</string>
+    <string name="browse_all_levels">Bütün Səviyyələrə Bax</string>
+    <string name="level_n">Səviyyə %1$d</string>
+    <string name="settings">Tənzimləmələr</string>
+    <string name="sound_effects">Səs Effektləri</string>
+    <string name="haptic_feedback">Toxunma Əks-əlaqəsi</string>
+    <string name="reset_all_scores">Bütün Xalları Sıfırla</string>
+    <string name="reset_all_scores_confirm">Bu klassik rejimdəki bütün ən yaxşı xallarınızı və çağırış rejimindəki irəliləyişinizi həmişəlik siləcək.</string>
+    <string name="reset">Sıfırla</string>
+    <string name="cancel">Ləğv Et</string>
+    <string name="challenge_levels">Çağırış Səviyyələri</string>
+    <string name="game_over">Oyun Bitdi</string>
+    <string name="quit">Çıx</string>
+    <string name="restart">Yenidən Başla</string>
+    <string name="next">Növbəti</string>
+    <string name="retry">Yenidən Cəhd Et</string>
+    <string name="not_played">Oynanılmayıb</string>
+    <string name="generic_error">Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.</string>
+    <string name="score_left">%1$d qaldı</string>
+</resources>
