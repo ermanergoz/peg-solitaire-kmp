@@ -61,6 +61,10 @@ android {
     }
 }
 
+compose.resources {
+    publicResClass = true
+}
+
 sqldelight {
     databases {
         create("PegSolitaireDatabase") {

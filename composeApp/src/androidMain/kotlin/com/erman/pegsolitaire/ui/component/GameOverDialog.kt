@@ -18,11 +18,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
-import pegsolitaire.composeapp.generated.resources.Res
-import pegsolitaire.composeapp.generated.resources.game_over
-import pegsolitaire.composeapp.generated.resources.next
-import pegsolitaire.composeapp.generated.resources.quit
-import pegsolitaire.composeapp.generated.resources.restart
+import pegsolitaire.shared.generated.resources.Res
+import pegsolitaire.shared.generated.resources.game_over
+import pegsolitaire.shared.generated.resources.next
+import pegsolitaire.shared.generated.resources.quit
+import pegsolitaire.shared.generated.resources.restart
 
 private const val STAR_FILLED = "\u2605"
 private const val STAR_EMPTY = "\u2606"

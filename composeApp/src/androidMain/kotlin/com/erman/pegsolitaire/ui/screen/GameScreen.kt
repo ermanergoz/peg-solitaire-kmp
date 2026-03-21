@@ -34,9 +34,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.erman.pegsolitaire.R
 import org.jetbrains.compose.resources.stringResource
-import pegsolitaire.composeapp.generated.resources.Res
-import pegsolitaire.composeapp.generated.resources.quit
-import pegsolitaire.composeapp.generated.resources.retry
+import pegsolitaire.shared.generated.resources.Res
+import pegsolitaire.shared.generated.resources.quit
+import pegsolitaire.shared.generated.resources.retry
 import com.erman.pegsolitaire.domain.model.GameState
 import com.erman.pegsolitaire.presentation.GameEvent
 import com.erman.pegsolitaire.presentation.GameViewModel
@@ -79,10 +79,11 @@ fun GameScreen(
         contentAlignment = Alignment.Center
     ) {
         val gameState = uiState.gameState
+        val error = uiState.error
 
         when {
-            uiState.error != null -> ErrorContent(
-                message = uiState.error!!,
+            error != null -> ErrorContent(
+                message = error,
                 onRetry = gameViewModel::resetGame,
                 onQuit = onQuit
             )
